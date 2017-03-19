@@ -9,6 +9,7 @@ from time import sleep
 import urllib2
 import requests
 import keys
+import mysql.connector
 
 LOG_FILENAME = keys.DIR + "wetter.log"
 LOG_LEVEL = logging.ERROR  # Could be e.g. "DEBUG" or "WARNING"
@@ -120,6 +121,18 @@ def calc_down(time, value):
         total_down = value
         return "0.0"
     
+def save_sql(data):
+    con = mysql.connector.connect(**keys.SQLCONFIG)
+    cur = con.cursor()
+    datum, zeit = data[0].split(" ")
+    cur.execute( 
+            'INSERT into wetter ' 
+            ' (date, time, temperatur, humidity, windspeed, downfall, rain) VALUES (%s,%s,%s,%s,%s,%s,%s)', 
+            (datum, zeit, data[1], data[2], data[3], data[4], data[5])
+            )
+    con.commit()
+    con.close()
+
 
 #Hauptprogramm, Schleife liest von ser und bereitet die Daten auf 
 def run():
@@ -179,6 +192,10 @@ def run():
                                 "&windspeed=" + str(dataset[3]))
             except:
                 logger.error("Error sparkfun")
+            try:
+                save_sql(dataset)
+            except:
+                logger.error("Error MySQL")
             dataset = []
     
         else:
