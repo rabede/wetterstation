@@ -9,7 +9,7 @@ from pip._vendor.distlib.util import CSVReader
 conn = sqlite3.connect('wetter.sqlite')
 cur = conn.cursor()
 
-downDate = '2017-08-15'
+downDate = '2017-08-20'
 
 sensorList = {'_bme280_sensor_3082', '_bme280_sensor_4977', '_dht22_sensor_4834', '_sds011_sensor_3081', '_sds011_sensor_4833', '_sds011_sensor_4975'}
 
