@@ -1,5 +1,5 @@
 #! python3
-# downloadLuftdatenInfo.py - Downloads data from http://archive.luftdaten.info/
+# downloadLuftdatenInfo.py - Downloads data from http://archive.luftdaten.info/ 
 
 import os, csv, sqlite3
 from urllib.request import urlretrieve
@@ -11,8 +11,8 @@ from dateutil.rrule import rrule, DAILY
 conn = sqlite3.connect('wetter.sqlite')
 cur = conn.cursor()
 
-start = input("Anfangsdatum eingeben: (YYYY-MM-DD)") or datetime.date.today()
-ende = input("Endedatum eingeben: (YYYY-MM-DD)") or datetime.date.today()
+start = input("Anfangsdatum eingeben: (YYYY-MM-DD)") or datetime.date.today() - datetime.timedelta(days =1)
+ende = input("Endedatum eingeben: (YYYY-MM-DD)") or datetime.date.today() - datetime.timedelta(days =1)
 
 if type(start) != datetime.date:
     start = datetime.datetime.strptime(start, "%Y-%m-%d")
@@ -22,11 +22,11 @@ if type(ende) != datetime.date:
 
 sensorList = {'_bme280_sensor_3082', '_bme280_sensor_4977', '_dht22_sensor_4834', '_sds011_sensor_3081', '_sds011_sensor_4833', '_sds011_sensor_4975'}
 
-url = 'http://archive.luftdaten.info/' # starting url
+url = 'http://archive.luftdaten.info/'  # starting url
 localDir = 'luftdaten/'
-os.makedirs(localDir, exist_ok=True) # store data in ./luftdaten
+os.makedirs(localDir, exist_ok=True)  # store data in ./luftdaten
 
-for dt in rrule(DAILY, dtstart = start, until = ende):
+for dt in rrule(DAILY, dtstart=start, until=ende):
     downDate = dt.strftime("%Y-%m-%d")
     for sensor in sensorList:
         fileName = downDate + sensor + '.csv'
