@@ -35,7 +35,7 @@ for dt in rrule(DAILY, dtstart=start, until=ende):
         # Download the page.
         try:
             urlretrieve(sensorUrl, dst)
-            print('Downloading page %s...' % sensorUrl)
+            print('Downloading page %s' % sensorUrl)
         
             with open(dst, newline='') as csvfile:
                 reader = csv.DictReader(csvfile, delimiter=';', quotechar='|')
