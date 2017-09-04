@@ -3,14 +3,15 @@
 
 import os, csv, sqlite3
 from urllib.request import urlretrieve
-from pip._vendor.distlib.util import CSVReader
 import datetime
 from dateutil.rrule import rrule, DAILY
-
+import mysql.connector
+from keys import SQLCONFIG
 
 conn = sqlite3.connect('wetter.sqlite')
 cur = conn.cursor()
 
+'''
 start = input("Anfangsdatum eingeben: (YYYY-MM-DD)") or datetime.date.today() - datetime.timedelta(days =1)
 ende = input("Endedatum eingeben: (YYYY-MM-DD)") or datetime.date.today() - datetime.timedelta(days =1)
 
@@ -19,6 +20,17 @@ if type(start) != datetime.date:
     
 if type(ende) != datetime.date:
     ende = datetime.datetime.strptime(ende, "%Y-%m-%d")    
+'''
+
+
+con2 = mysql.connector.connect(**SQLCONFIG)
+cur2 = con2.cursor()
+#Letzten Eintrag aus MySQL-DB holen:
+cur2.execute('Select max( timestamp ) from luftdaten')
+start = cur2.fetchone()[0]
+ende = datetime.date.today()
+
+print(start)
 
 sensorList = {'_bme280_sensor_3082', '_bme280_sensor_4977', '_dht22_sensor_4834', '_sds011_sensor_3081', '_sds011_sensor_4833', '_sds011_sensor_4975'}
 
@@ -34,28 +46,57 @@ for dt in rrule(DAILY, dtstart=start, until=ende):
         sensorUrl = url + downDate + '/' + fileName
         # Download the page.
         try:
-            urlretrieve(sensorUrl, dst)
-            print('Downloading page %s' % sensorUrl)
+            if os.path.isfile(dst):
+                print('%s already downloaded' % sensorUrl)
+            else:
+                urlretrieve(sensorUrl, dst)
+                print('Downloading page %s' % sensorUrl)
         
             with open(dst, newline='') as csvfile:
                 reader = csv.DictReader(csvfile, delimiter=';', quotechar='|')
                 for row in reader:
                     try:
                         if row['sensor_type'] == 'BME280':
-                            cur.execute('''INSERT or IGNORE into luftdaten_raw (timestamp, sensor_id, sensor_type, location, lat, lon, pressure, temperature, humidity )       
-                                       VALUES (?,?,?,?,?,?,?,?,?)''', (row['timestamp'], row['sensor_id'], row['sensor_type'], row['location'], row['lat'], row['lon'], row['pressure'], row['temperature'], row['humidity']))
+                            cur.execute(
+                                '''INSERT or IGNORE into luftdaten_raw 
+                                (timestamp, sensor_id, sensor_type, location, lat, lon, pressure, temperature, humidity ) 
+                                VALUES (?,?,?,?,?,?,?,?,?)''', (row['timestamp'], row['sensor_id'], row['sensor_type'], 
+                                                                row['location'], row['lat'], row['lon'], row['pressure'], 
+                                                                row['temperature'], row['humidity']))
                         elif row['sensor_type'] == 'DHT22':
-                            cur.execute('''INSERT or IGNORE into luftdaten_raw (timestamp, sensor_id, sensor_type, location, lat, lon, temperature, humidity )       
-                                       VALUES (?,?,?,?,?,?,?,?)''', (row['timestamp'], row['sensor_id'], row['sensor_type'], row['location'], row['lat'], row['lon'], row['temperature'], row['humidity']))
+                            cur.execute(
+                                '''INSERT or IGNORE into luftdaten_raw 
+                                (timestamp, sensor_id, sensor_type, location, lat, lon, temperature, humidity )       
+                                VALUES (?,?,?,?,?,?,?,?)''', (row['timestamp'], row['sensor_id'], row['sensor_type'], 
+                                                              row['location'], row['lat'], row['lon'], row['temperature'], row['humidity']))
                         elif row['sensor_type'] == 'SDS011':
-                            cur.execute('''INSERT or IGNORE into luftdaten_raw (timestamp, sensor_id, sensor_type, location, lat, lon, p1, p2 )       
-                                       VALUES (?,?,?,?,?,?,?,?)''', (row['timestamp'], row['sensor_id'], row['sensor_type'], row['location'], row['lat'], row['lon'], row['P1'], row['P2']))
+                            cur.execute(
+                                '''INSERT or IGNORE into luftdaten_raw 
+                                (timestamp, sensor_id, sensor_type, location, lat, lon, p1, p2 )       
+                                VALUES (?,?,?,?,?,?,?,?)''', (row['timestamp'], row['sensor_id'], row['sensor_type'], 
+                                                              row['location'], row['lat'], row['lon'], row['P1'], row['P2']))
                     except:
                         print('Fehler: ', row)
         
             conn.commit()
         except: 
-            print('File not found %s...' % sensorUrl)
+            print('File not found %s' % sensorUrl)
+
+#Als Select-Parameter für SQLITE muß eine Liste [] übergeben werden!
+for data in cur.execute(
+    '''select id, timestamp, sensor_id, sensor_type, location, lat, lon, p1, p2, pressure, temperature, humidity 
+    from luftdaten_raw where date(timestamp) > ?''', [start]):
+    print(data)
+    cur2.execute(
+            '''INSERT IGNORE into luftdaten  
+            (id, timestamp, sensor_id, sensor_type, location, lat, lon, p1, p2, pressure, temperature, humidity) 
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+            (data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11]))
+    con2.commit()
+
+con2.close()
+
+conn.close()
 
 
 print('Done.')
