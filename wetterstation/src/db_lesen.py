@@ -25,7 +25,10 @@ cur = conn.cursor()
 
 
 def read_data(cur):
-    cur.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter where date between %s and %s ', (start, ende))
+    if db == 'M':
+        cur.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter where date between %s and %s ', (start, ende))
+    else:
+        cur.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter where date between ? and ? ', (start, ende))
     return cur
 
 df = pd.DataFrame(read_data(cur).fetchall(), columns=['date', 'time', 'temp', 'hum', 'wind', 'down', 'rain'])

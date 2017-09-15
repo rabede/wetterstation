@@ -6,9 +6,15 @@ Created on 16.01.2017
 '''
 import sqlite3
 import pandas as pd
+import mysql.connector
+from keys import SQLCONFIG
+
 
 conn = sqlite3.connect('wetter.sqlite')
 cur = conn.cursor()
+con2 = mysql.connector.connect(**SQLCONFIG)
+cur2 = con2.cursor()
+
 
 def read_data(cur):
     ''' Read rawdata to be cleaned'''
@@ -31,6 +37,14 @@ def save_data(cur, data, table='wetter'):
             (str(data['date']), str(data['time']), data['temp'], data['hum'], data['wind'], data['down'], data['rain'])
             )
     del_data(cur, data['id'])
+    if table == 'wetter':
+        #timestamp = data['date'] + ' ' + data['time']
+        cur2.execute(
+                'INSERT IGNORE into wetter ' 
+                ' (timestamp, temperatur, humidity, windspeed, downfall, rain) VALUES (%s,%s,%s,%s,%s,%s)',
+                (str(data['timestamp']), data['temp'], data['hum'], data['wind'], data['down'], data['rain']) 
+                )
+
 
 def check_data(data):
     table = 'wetter_errors'
@@ -49,9 +63,11 @@ df = pd.DataFrame( read_data(cur).fetchall(), columns = ['id', 'timestamp', 'tem
 df['timestamp'] = pd.to_datetime(df['timestamp'])
 df['date'] = df['timestamp'].dt.date
 df['time'] = df['timestamp'].dt.time
-df = df.drop(['timestamp'], axis=1)
+#df = df.drop(['timestamp'], axis=1)
 
 df.apply(check_data, axis=1)
 
 conn.commit()
 conn.close()
+con2.commit()
+con2.close()
