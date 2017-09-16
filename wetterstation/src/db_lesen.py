@@ -14,7 +14,7 @@ import datetime
 
 start = input("Anfangsdatum eingeben: (YYYY-MM-DD)") or datetime.date.today()
 ende = input("Endedatum eingeben: (YYYY-MM-DD)") or '9999-12-31'
-db = input("[S]qlite oder [M]ySQL?") or 'M'
+db = input("[S]qlite oder [M]ySQL?").upper() or 'M'
 
 if db == 'M':
     conn = mysql.connector.connect(**keys.SQLCONFIG)
@@ -37,8 +37,8 @@ df = pd.DataFrame(read_data(cur).fetchall(), columns=['date', 'time', 'temp', 'h
 
 # df.apply(print_data, axis=1)
 
-# for row in df.itertuples():
-#    print(row)
+#for row in df.itertuples():
+    #print(row)
 
 print('Maximaltemperatur: \n', df.nlargest(1, 'temp'))
 print('Minimaltemperatur: \n', df.nsmallest(1, 'temp'))
@@ -50,5 +50,5 @@ print(df.nlargest(5, 'down'))
 
 # print(df['temp'].agg(min))
 
-plt.plot(df['temp'])
+plt.plot(df['down'])
 plt.show()
