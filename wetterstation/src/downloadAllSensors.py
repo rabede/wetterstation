@@ -1,7 +1,8 @@
 #! python3
 # downloadLuftdatenInfo.py - Downloads data from http://archive.luftdaten.info/ 
 
-import sqlite3
+from keys import SQLCONFIG
+import mysql.connector
 import requests
 import time
 import pandas as pd
@@ -30,16 +31,16 @@ def get_geodata(row):
     row['plz'] = res.json()['address']['postcode']
 
 
-conn = sqlite3.connect('wetter.sqlite')
+conn = mysql.connector.connect(**SQLCONFIG)
 cur = conn.cursor()
 
 url = 'http://archive.luftdaten.info/'  # starting url
 
-downDate = '2017-09-25'
+downDate = '2017-09-24'
 downloads = 0
 start = time.time()
 
-for i in range(4881,5403):
+for i in range(4138,5403):
     filename =  downDate + '_sds011_sensor_' + str(i) + '.csv'
     sensorUrl = url + downDate + '/' + filename
     
@@ -56,12 +57,12 @@ for i in range(4881,5403):
     
     if row['lon'] >= 6.89 and row['lon'] <= 7.12  and row['lat'] >= 51.01 and row['lat'] <= 51.1:
         get_geodata(row)
-        cur.execute('''INSERT or IGNORE into luftdaten_lev (sensor_id, sensor_type, location, lat, lon, adresse, plz, ort )       
-                       VALUES (?,?,?,?,?, ?, ?, ?)''', (str(row['sensor_id']), row['sensor_type'], str(row['location']), row['lat'], row['lon'], row['adresse'], row['plz'], row['ort']))
+        cur.execute('''INSERT IGNORE into luftdaten_lev (sensor_id, sensor_type, location, lat, lon, adresse, plz, ort )       
+                       VALUES (%s,%s,%s, %s, %s, %s, %s, %s)''', (str(row['sensor_id']), row['sensor_type'], str(row['location']), float(row['lat']), float(row['lon']), row['adresse'], row['plz'], row['ort']))
         
         conn.commit()
         downloads += 1
-        wait(2)
+        wait(5)
 
 end = time.time()
 
