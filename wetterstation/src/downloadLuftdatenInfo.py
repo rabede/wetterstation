@@ -71,7 +71,7 @@ def get_files(conn, cur, start, ende):
 # Letzten Eintrag aus MySQL-DB holen:
 cur2.execute('Select max( timestamp ) from luftdaten')
 start = cur2.fetchone()[0]
-#start = datetime.datetime.strptime('2017-09-06', "%Y-%m-%d")
+#start = datetime.datetime.strptime('2017-09-24', "%Y-%m-%d")
 ende = datetime.date.today()
 
 

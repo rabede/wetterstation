@@ -6,6 +6,28 @@ import requests
 import time
 import pandas as pd
 from builtins import range
+from asyncio.tasks import wait
+
+def get_geodata(row):
+    url = 'http://nominatim.openstreetmap.org/reverse'
+    lat = row['lat']
+    lon = row['lon']
+    
+    params = {'lat':lat, 'lon':lon, 'format':'json'}
+    res =  requests.get(url, params = params)
+    
+    try:
+        row['ort'] = res.json()['address']['suburb']
+    except:
+        row['ort'] = res.json()['address']['city']
+    try: 
+        row['adresse'] = res.json()['address']['road'] + ' ' + res.json()['address']['house_number']
+    except:
+        try:
+            row['adresse'] = res.json()['address']['road']
+        except:
+            row['adresse'] = ''
+    row['plz'] = res.json()['address']['postcode']
 
 
 conn = sqlite3.connect('wetter.sqlite')
@@ -13,10 +35,11 @@ cur = conn.cursor()
 
 url = 'http://archive.luftdaten.info/'  # starting url
 
-downDate = '2017-09-03'
+downDate = '2017-09-25'
+downloads = 0
 start = time.time()
 
-for i in range(35,5480):
+for i in range(4881,5403):
     filename =  downDate + '_sds011_sensor_' + str(i) + '.csv'
     sensorUrl = url + downDate + '/' + filename
     
@@ -28,25 +51,19 @@ for i in range(35,5480):
         continue
 
     sensor = pd.read_csv(sensorUrl, header=0, delimiter = ';')
-    for index, row in sensor.iterrows():
-        try:
-            if row['sensor_type'] == 'BME280':
-                cur.execute('''INSERT or IGNORE into luftdaten_raw (timestamp, sensor_id, sensor_type, location, lat, lon, pressure, temperature, humidity )       
-                           VALUES (?,?,?,?,?,?,?,?,?)''', (row['timestamp'], row['sensor_id'], row['sensor_type'], row['location'], row['lat'], row['lon'], row['pressure'], row['temperature'], row['humidity']))
-            elif row['sensor_type'] == 'DHT22':
-                cur.execute('''INSERT or IGNORE into luftdaten_raw (timestamp, sensor_id, sensor_type, location, lat, lon, temperature, humidity )       
-                           VALUES (?,?,?,?,?,?,?,?)''', (row['timestamp'], row['sensor_id'], row['sensor_type'], row['location'], row['lat'], row['lon'], row['temperature'], row['humidity']))
-            elif row['sensor_type'] == 'SDS011':
-                cur.execute('''INSERT or IGNORE into luftdaten_raw (timestamp, sensor_id, sensor_type, location, lat, lon, p1, p2 )       
-                           VALUES (?,?,?,?,?,?,?,?)''', (row['timestamp'], row['sensor_id'], row['sensor_type'], row['location'], row['lat'], row['lon'], row['P1'], row['P2']))
-        except:
-            sensor.to_csv(filename)
-
-    conn.commit()
-    #except: 
-    #    
+    row = sensor.iloc[0]
+    print(row['sensor_id'], row['lon'], row['lat'])
+    
+    if row['lon'] >= 6.89 and row['lon'] <= 7.12  and row['lat'] >= 51.01 and row['lat'] <= 51.1:
+        get_geodata(row)
+        cur.execute('''INSERT or IGNORE into luftdaten_lev (sensor_id, sensor_type, location, lat, lon, adresse, plz, ort )       
+                       VALUES (?,?,?,?,?, ?, ?, ?)''', (str(row['sensor_id']), row['sensor_type'], str(row['location']), row['lat'], row['lon'], row['adresse'], row['plz'], row['ort']))
+        
+        conn.commit()
+        downloads += 1
+        wait(2)
 
 end = time.time()
 
-print('Done in ', end -start )
+print(downloads, ' done in ', end -start )
 conn.close()
