@@ -4,17 +4,20 @@
 from keys import SQLCONFIG
 import mysql.connector
 import requests
-import time
+import time, datetime
 import pandas as pd
 from builtins import range
 from asyncio.tasks import wait
 
-conn = mysql.connector.connect(**SQLCONFIG)
-cur = conn.cursor()
+conns = mysql.connector.connect(**SQLCONFIG)
+curs = conns.cursor()
 
-downDate = '2017-10-03'
+downDate = str(datetime.date.today() - datetime.timedelta(days=1))
 downloads = 0
 start = time.time()
+
+curs.execute('Select max( sensor_id ) from luftdaten_lev')
+maxid = int(curs.fetchone()[0])
 
 #Hole Geodaten zu gegebenr Länge/Breite
 def get_geodata(row):
@@ -61,18 +64,18 @@ def get_file(date, nr, typ = 'sds011'):
 
 def save_data(row):    
     global downloads    
-    cur.execute('''INSERT IGNORE into luftdaten_lev (sensor_id, sensor_type, location, lat, lon, adresse, plz, ort )       
+    curs.execute('''INSERT IGNORE into luftdaten_lev (sensor_id, sensor_type, location, lat, lon, adresse, plz, ort )       
                        VALUES (%s,%s,%s, %s, %s, %s, %s, %s)''', (str(row['sensor_id']), row['sensor_type'], str(row['location']), float(row['lat']), float(row['lon']), row['adresse'], row['plz'], row['ort']))
         
-    conn.commit()
+    conns.commit()
     downloads += 1
     wait(5)
 
-for i in range(6017, 6100):
+for i in range(maxid + 1, maxid + 1000):
     get_file(downDate, str(i))
     
 
 end = time.time()
 
 print(downloads, ' done in ', end -start )
-conn.close()
+conns.close()

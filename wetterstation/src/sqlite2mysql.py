@@ -8,25 +8,25 @@ import sqlite3
 import mysql.connector
 from keys import SQLCONFIG
 
-conn = sqlite3.connect('wetter.sqlite')
-cur = conn.cursor()
+conns = sqlite3.connect('wetter.sqlite')
+curs = conns.cursor()
 
-con2 = mysql.connector.connect(**SQLCONFIG)
-cur2 = con2.cursor()
+connm = mysql.connector.connect(**SQLCONFIG)
+curm = connm.cursor()
 
-for data in cur.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter'):
+for data in curs.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter'):
     print(data)
     timestamp = data[0] + ' ' + data[1]
-    cur2.execute(
+    curm.execute(
             'INSERT IGNORE into wetter ' 
             ' (timestamp, temperatur, humidity, windspeed, downfall, rain) VALUES (%s,%s,%s,%s,%s,%s)',
             (timestamp, data[2], data[3], data[4], data[5], data[6]) 
             )
-    con2.commit()
+    connm.commit()
 
-con2.close()
+connm.close()
 
-conn.close()
+conns.close()
 
 
 

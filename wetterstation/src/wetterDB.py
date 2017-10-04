@@ -4,11 +4,11 @@ import sqlite3
 database_name = 'wetter.sqlite'
 
 def create_tables(database, table, rows):
-    conn = sqlite3.connect(database)
-    cur = conn.cursor()
-#    cur.execute('DROP TABLE IF EXISTS ' + table)
-    cur.execute('CREATE TABLE ' + table + ' (' + rows + ')')
-    conn.close
+    conns = sqlite3.connect(database)
+    curs = conns.cursor()
+#    curs.execute('DROP TABLE IF EXISTS ' + table)
+    curs.execute('CREATE TABLE ' + table + ' (' + rows + ')')
+    conns.close
 
 #table_name = 'wetter_raw'
 #row_names = 'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, timestamp TIMESTAMP UNIQUE, temperatur FLOAT, humidity INTEGER, windspeed FLOAT, downfall FLOAT, rain BOOLEAN'

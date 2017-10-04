@@ -123,9 +123,9 @@ def calc_down(time, value):
     
 def save_sql(data):
     con = mysql.connector.connect(**keys.SQLCONFIG)
-    cur = con.cursor()
+    curs = con.cursor()
     datum, zeit = data[0].split(" ")
-    cur.execute( 
+    curs.execute( 
             'INSERT into wetter ' 
             ' (date, time, temperatur, humidity, windspeed, downfall, rain) VALUES (%s,%s,%s,%s,%s,%s,%s)', 
             (datum, zeit, data[1], data[2], data[3], data[4], data[5])

@@ -10,36 +10,36 @@ import mysql.connector
 from keys import SQLCONFIG
 
 
-conn = sqlite3.connect('wetter.sqlite')
-cur = conn.cursor()
-con2 = mysql.connector.connect(**SQLCONFIG)
-cur2 = con2.cursor()
+conns = sqlite3.connect('wetter.sqlite')
+curs = conns.cursor()
+connm = mysql.connector.connect(**SQLCONFIG)
+curm = connm.cursor()
 
 
-def read_data(cur):
+def read_data(curs):
     ''' Read rawdata to be cleaned'''
-    cur.execute('select id, timestamp, temperatur, humidity, windspeed, downfall, rain from  wetter_raw ')
-    return cur
+    curs.execute('select id, timestamp, temperatur, humidity, windspeed, downfall, rain from  wetter_raw ')
+    return curs
 
-def del_data(cur, ind):
+def del_data(curs, ind):
     '''Delete entry from raw data table'''
-    cur.execute('delete from wetter_raw where id = ?', (ind,)) #make sure parameter is a tuple!
-    return cur
+    curs.execute('delete from wetter_raw where id = ?', (ind,)) #make sure parameter is a tuple!
+    return curs
 
 def print_data(data):
     print(data['date'], data['time'], data['temp'], data['hum'], data['wind'], data['down'], data['rain'])
 
-def save_data(cur, data, table='wetter'):
+def save_data(curs, data, table='wetter'):
     ''' Save refined data into final table, implausible data into errortable, then delete from raw_data'''        
-    cur.execute( 
+    curs.execute( 
             'INSERT OR IGNORE into ' + table + 
             ' (date, time, temperatur, humidity, windspeed, downfall, rain) VALUES (?,?,?,?,?,?,?)', 
             (str(data['date']), str(data['time']), data['temp'], data['hum'], data['wind'], data['down'], data['rain'])
             )
-    del_data(cur, data['id'])
+    del_data(curs, data['id'])
     if table == 'wetter':
         #timestamp = data['date'] + ' ' + data['time']
-        cur2.execute(
+        curm.execute(
                 'INSERT IGNORE into wetter ' 
                 ' (timestamp, temperatur, humidity, windspeed, downfall, rain) VALUES (%s,%s,%s,%s,%s,%s)',
                 (str(data['timestamp']), data['temp'], data['hum'], data['wind'], data['down'], data['rain']) 
@@ -57,9 +57,9 @@ def check_data(data):
         print_data(data)
     else:
         table = 'wetter'
-    save_data(cur, data, table)   
+    save_data(curs, data, table)   
 
-df = pd.DataFrame( read_data(cur).fetchall(), columns = ['id', 'timestamp', 'temp', 'hum', 'wind', 'down', 'rain'])
+df = pd.DataFrame( read_data(curs).fetchall(), columns = ['id', 'timestamp', 'temp', 'hum', 'wind', 'down', 'rain'])
 df['timestamp'] = pd.to_datetime(df['timestamp'])
 df['date'] = df['timestamp'].dt.date
 df['time'] = df['timestamp'].dt.time
@@ -67,7 +67,7 @@ df['time'] = df['timestamp'].dt.time
 
 df.apply(check_data, axis=1)
 
-conn.commit()
-conn.close()
-con2.commit()
-con2.close()
+conns.commit()
+conns.close()
+connm.commit()
+connm.close()

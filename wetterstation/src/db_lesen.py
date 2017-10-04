@@ -17,21 +17,21 @@ ende = input("Endedatum eingeben: (YYYY-MM-DD)") or '9999-12-31'
 db = input("[S]qlite oder [M]ySQL?").upper() or 'M'
 
 if db == 'M':
-    conn = mysql.connector.connect(**keys.SQLCONFIG)
+    conns = mysql.connector.connect(**keys.SQLCONFIG)
 else:
-    conn = sqlite3.connect('wetter.sqlite')
+    conns = sqlite3.connect('wetter.sqlite')
     
-cur = conn.cursor()
+curs = conns.cursor()
 
 
-def read_data(cur):
+def read_data(curs):
     if db == 'M':
-        cur.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter where date between %s and %s ', (start, ende))
+        curs.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter where date between %s and %s ', (start, ende))
     else:
-        cur.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter where date between ? and ? ', (start, ende))
-    return cur
+        curs.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter where date between ? and ? ', (start, ende))
+    return curs
 
-df = pd.DataFrame(read_data(cur).fetchall(), columns=['date', 'time', 'temp', 'hum', 'wind', 'down', 'rain'])
+df = pd.DataFrame(read_data(curs).fetchall(), columns=['date', 'time', 'temp', 'hum', 'wind', 'down', 'rain'])
 
 # df['c'] = df[['a','b']].apply(lambda x: do stuff with x[0] and x[1] here, axis=1) 
 

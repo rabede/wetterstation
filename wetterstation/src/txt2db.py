@@ -8,13 +8,13 @@ import sqlite3
 import os
 import openpyxl
 
-conn = sqlite3.connect('wetter.sqlite')
-cur = conn.cursor()
+conns = sqlite3.connect('wetter.sqlite')
+curs = conns.cursor()
 data_dir = "../data"
 
-def save_data(cur, data):
+def save_data(curs, data):
     try:
-        cur.execute('''INSERT OR IGNORE into wetter_raw (timestamp, temperatur, humidity, windspeed, downfall, rain)       
+        curs.execute('''INSERT OR IGNORE into wetter_raw (timestamp, temperatur, humidity, windspeed, downfall, rain)       
                        VALUES (?,?,?,?,?,?)''',     (data[0], data[1], data[2], data[3], data[4], data[5]))
     except:
         print('Fehler: ', data)
@@ -26,7 +26,7 @@ def get_wetterpi(file):
         for line in text:
             cleanline = line.strip("[]\n").replace("'", "")
             data = cleanline.split(",")
-            save_data(cur, data)
+            save_data(curs, data)
 
 def get_google(file):
     data = [""]*6
@@ -43,7 +43,7 @@ def get_google(file):
         else:
             data[5] = 0
  
-        save_data(cur, data)
+        save_data(curs, data)
       
 def reset_filenames(path):
     for file in os.listdir(path):
@@ -59,11 +59,11 @@ def loop_dir(path):
         else:
             continue
         os.rename(file, file + '.read')
-        conn.commit()
+        conns.commit()
 
 os.chdir(data_dir)
 #reset_filenames(data_dir)
 loop_dir(data_dir)
 
-conn.commit()
-conn.close()
+conns.commit()
+conns.close()
