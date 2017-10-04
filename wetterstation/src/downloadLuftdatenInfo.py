@@ -24,17 +24,19 @@ localDir = '../data/'
 
 os.makedirs(localDir, exist_ok=True)  # store data in ./luftdaten
     
-#Alle Sensoren aus DB holen:
+# Alle Sensoren aus DB holen:
 curm.execute('Select sensor_id, sensor_type from luftdaten_lev') # where sensor_type = "DHT22"')
 sensors = curm.fetchall()
+#sensors = [('5943', 'SDS011')]
 for sensor in sensors:
     sensor_type = sensor[1]
     sensor_id = sensor[0]
     
 # Letzten Eintrag aus MySQL-DB holen:
-    curm.execute('Select max( timestamp ) from luftdaten where sensor_id = "%s"' %(sensor_id))
-    start = curm.fetchone()[0] #+ datetime.timedelta(days=1)
-#start = datetime.datetime.strptime('2017-09-27', "%Y-%m-%d")
+    curm.execute('Select max( timestamp ) from luftdaten where sensor_id = "%s"' % (sensor_id))
+    start = curm.fetchone()[0] 
+    if start == None:
+        start = datetime.datetime.today() - datetime.timedelta(days=3)
 
     for dt in rrule(DAILY, dtstart=start, until=ende):
         downDate = dt.strftime("%Y-%m-%d")
@@ -55,7 +57,7 @@ for sensor in sensors:
                         if row['sensor_type'] == 'BME280':
                             curs.execute('''INSERT or IGNORE into luftdaten_raw 
                                 (timestamp, sensor_id, sensor_type, location, lat, lon, pressure, temperature, humidity ) 
-                                VALUES (?,?,?,?,?,?,?,?,?)''', 
+                                VALUES (?,?,?,?,?,?,?,?,?)''',
                                 (row['timestamp'], row['sensor_id'], row['sensor_type'], row['location'], row['lat'], row['lon'], row['pressure'], row['temperature'], row['humidity']))
 
                             curm.execute('''INSERT IGNORE into luftdaten  
@@ -66,7 +68,7 @@ for sensor in sensors:
                         elif row['sensor_type'] == 'DHT22':
                             curs.execute('''INSERT or IGNORE into luftdaten_raw 
                                 (timestamp, sensor_id, sensor_type, location, lat, lon, temperature, humidity )       
-                                VALUES (?,?,?,?,?,?,?,?)''', 
+                                VALUES (?,?,?,?,?,?,?,?)''',
                                 (row['timestamp'], row['sensor_id'], row['sensor_type'], row['location'], row['lat'], row['lon'], row['temperature'], row['humidity']))
 
                             curm.execute('''INSERT IGNORE into luftdaten  
@@ -77,7 +79,7 @@ for sensor in sensors:
                         elif row['sensor_type'] == 'SDS011':
                             curs.execute('''INSERT or IGNORE into luftdaten_raw 
                                 (timestamp, sensor_id, sensor_type, location, lat, lon, p1, p2 )       
-                                VALUES (?,?,?,?,?,?,?,?)''', 
+                                VALUES (?,?,?,?,?,?,?,?)''',
                                 (row['timestamp'], row['sensor_id'], row['sensor_type'], row['location'], row['lat'], row['lon'], row['P1'], row['P2']))
                             
                             curm.execute('''INSERT IGNORE into luftdaten  
