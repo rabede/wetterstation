@@ -7,13 +7,14 @@ Created on 16.01.2017
 import sqlite3
 import pandas as pd
 import datetime
+import keys
 
 
 
 start = input("Anfangsdatum eingeben: (YYYY-MM-DD)") or datetime.date.today() - datetime.timedelta(days=1)
 ende = input("Endedatum eingeben: (YYYY-MM-DD)") or '9999-12-31'
 
-conns = sqlite3.connect('wetter.sqlite')
+conns = sqlite3.connect(**keys.SQLITECONFIG)
     
 curs = conns.cursor()
 

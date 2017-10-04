@@ -6,12 +6,12 @@ from urllib.request import urlretrieve
 import datetime
 from dateutil.rrule import rrule, DAILY
 import mysql.connector
-from keys import SQLCONFIG
+import keys
 
-conns = sqlite3.connect('wetter.sqlite')
+conns = sqlite3.connect(**keys.SQLITECONFIG)
 curs = conns.cursor()
 
-connm = mysql.connector.connect(**SQLCONFIG)
+connm = mysql.connector.connect(**keys.SQLCONFIG)
 curm = connm.cursor()
 
 cntsql = 0

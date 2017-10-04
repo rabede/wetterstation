@@ -7,12 +7,13 @@ Created on 16.01.2017
 import sqlite3
 import csv
 import datetime
+import keys
 
 
 start = input("Anfangsdatum eingeben: (YYYY-MM-DD)") or datetime.date.today()
 ende = input("Endedatum eingeben: (YYYY-MM-DD)") or '9999-12-31'
 
-conns = sqlite3.connect('wetter.sqlite')
+conns = sqlite3.connect(**keys.SQLITECONFIG)
     
 curs = conns.cursor()
 

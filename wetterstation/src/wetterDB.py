@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import sqlite3
+import keys
 
-database_name = 'wetter.sqlite'
+database_name = keys.SQLITECONFIG
 
 def create_tables(database, table, rows):
     conns = sqlite3.connect(database)

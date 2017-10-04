@@ -7,8 +7,9 @@ Created on 27.12.2016
 import sqlite3
 import os
 import openpyxl
+import keys
 
-conns = sqlite3.connect('wetter.sqlite')
+conns = sqlite3.connect(**keys.SQLITECONFIG)
 curs = conns.cursor()
 data_dir = "../data"
 

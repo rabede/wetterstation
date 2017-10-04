@@ -7,12 +7,12 @@ Created on 16.01.2017
 import sqlite3
 import pandas as pd
 import mysql.connector
-from keys import SQLCONFIG
+import keys
 
 
-conns = sqlite3.connect('wetter.sqlite')
+conns = sqlite3.connect(**keys.SQLITECONFIG)
 curs = conns.cursor()
-connm = mysql.connector.connect(**SQLCONFIG)
+connm = mysql.connector.connect(**keys.SQLCONFIG)
 curm = connm.cursor()
 
 
