@@ -63,7 +63,6 @@ def get_files(conn, cur, start, ende):
                 #    print('Downloading page %s' % sensorUrl)
                 
                 with open(dst, newline='') as csvfile:
-                    cntdow += 1
                     reader = csv.DictReader(csvfile, delimiter=';', quotechar='|')
                     for row in reader:
                         try:
@@ -82,6 +81,7 @@ def get_files(conn, cur, start, ende):
                             cntsql += 1
                         except:
                             print('Fehler: ', row)
+                cntdow += 1
             except:
                 print('File not found %s' % sensorUrl)
                 cntntf += 1
@@ -90,7 +90,7 @@ def get_files(conn, cur, start, ende):
 # Letzten Eintrag aus MySQL-DB holen:
 cur2.execute('Select max( timestamp ) from luftdaten')
 start = cur2.fetchone()[0]
-#start = datetime.datetime.strptime('2017-09-28', "%Y-%m-%d")
+#start = datetime.datetime.strptime('2017-09-27', "%Y-%m-%d")
 ende = datetime.date.today()
 
 

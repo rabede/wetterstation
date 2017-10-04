@@ -12,7 +12,7 @@ from asyncio.tasks import wait
 conn = mysql.connector.connect(**SQLCONFIG)
 cur = conn.cursor()
 
-downDate = '2017-09-25'
+downDate = '2017-10-03'
 downloads = 0
 start = time.time()
 
@@ -68,7 +68,7 @@ def save_data(row):
     downloads += 1
     wait(5)
 
-for i in range(5403, 5404):
+for i in range(6017, 6100):
     get_file(downDate, str(i))
     
 
