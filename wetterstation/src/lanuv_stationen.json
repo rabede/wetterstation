@@ -1,0 +1,114 @@
+[
+	{
+		"Ort": "Köln",
+		"Straße": "Bergisch-Gladbacher Straße",
+		"Station": "KOBG",
+		"PLZ": "51067",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Köln",
+		"Straße": "Clevischer Ring",
+		"Station": "VKCL",
+		"PLZ": "51065",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Köln",
+		"Straße": "Dellbücker Hauptstraße",
+		"Station": "KODH",
+		"PLZ": "51069",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Köln",
+		"Straße": "Hauptstraße",
+		"Station": "KOHA",
+		"PLZ": "51143",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Köln",
+		"Straße": "Justinianstraße",
+		"Station": "KJUS",
+		"PLZ": "50679",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Köln",
+		"Straße": "Lindweilerweg 144",
+		"Station": "KLLW",
+		"PLZ": "50739",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Köln",
+		"Straße": "Luxemburger Straße",
+		"Station": "VKLS",
+		"PLZ": "50939",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Köln",
+		"Straße": "Neumarkt",
+		"Station": "KNEU",
+		"PLZ": "50667",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Köln",
+		"Straße": "Turiner Straße",
+		"Station": "VKTU",
+		"PLZ": "50668",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Köln-Chorweiler",
+		"Straße": "",
+		"Station": "CHOR",
+		"PLZ": "50765",
+		"Standort": "Hintergrund"
+	},
+	{
+		"Ort": "Köln-Godorf",
+		"Straße": "",
+		"Station": "KGOD",
+		"PLZ": "50997",
+		"Standort": "Industrie"
+	},
+	{
+		"Ort": "Köln-Meschenich",
+		"Straße": "Brühler Landstraße",
+		"Station": "KMEB",
+		"PLZ": "50997",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Köln-Rodenkirchen",
+		"Straße": "",
+		"Station": "RODE",
+		"PLZ": "50996",
+		"Standort": "Hintergrund"
+	},
+	{
+		"Ort": "Köln-Weiden",
+		"Straße": "",
+		"Station": "KWEI",
+		"PLZ": "50858",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Leverkusen",
+		"Straße": "Gustav-Heinemann-Straße",
+		"Station": "VLEG",
+		"PLZ": "51377",
+		"Standort": "Verkehr"
+	},
+	{
+		"Ort": "Leverkusen-Manfort",
+		"Straße": "",
+		"Station": "LEV2",
+		"PLZ": "51373",
+		"Standort": "Hintergrund"
+	}
+]
