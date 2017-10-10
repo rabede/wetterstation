@@ -46,6 +46,7 @@ for sensor in sensors:
         try:
             if os.path.isfile(dst):
                 print('%s already downloaded' % sensorUrl)
+                continue
             else:
                 urlretrieve(sensorUrl, dst)
                 print('Downloading page %s' % sensorUrl)
