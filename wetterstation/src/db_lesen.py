@@ -24,8 +24,8 @@ else:
 curs = conns.cursor()
 
 if db == 'M':
-    curs.execute('select timestamp, temperatur, humidity, windspeed, downfall, rain from  wetter where timestamp between %s and %s ', (start, ende))
-    df = pd.DataFrame(curs.fetchall(), columns=['timestamp', 'temp', 'hum', 'wind', 'down', 'rain'])
+    curs.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter where date between %s and %s ', (start, ende))
+    df = pd.DataFrame(curs.fetchall(), columns=['date', 'time', 'temp', 'hum', 'wind', 'down', 'rain'])
 else:
     curs.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter where date between ? and ? ', (start, ende))
     df = pd.DataFrame(curs.fetchall(), columns=['date', 'time', 'temp', 'hum', 'wind', 'down', 'rain'])

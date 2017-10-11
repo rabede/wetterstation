@@ -11,30 +11,27 @@ def getLanuvData(localDir):
     lanuvStationen = 'lanuv_stationen.json'
     stationen = json.load(open(lanuvStationen))
     for station in stationen:
-        fileName = station["Station"] + '.csv'
-        dst = localDir + fileName
-        sensorUrl = url + fileName
-        # Download the page.
-        try:
-            if os.path.isfile(dst):
-                print('%s already downloaded' % sensorUrl)
-            else:
+        if station["csv"] == "True":
+            fileName = station["Station"] + '.csv'
+            dst = localDir + fileName
+            sensorUrl = url + fileName
+            # Download the page.
+            try:
                 r = requests.get(sensorUrl)
                 r.raise_for_status()
-                r.encoding = 'UTF-8 with BOM'
                 print('Downloading page %s' % sensorUrl)
                 with open(dst, 'w') as file:
                     file.write(r.text)
-                                        
-        except:
-            print('File not found %s' % sensorUrl)
-            continue
-        
-        df = pd.read_csv(dst, header=1, delimiter=';')
-        print(df.head())
-        
+                                            
+            except:
+                print('File not found %s' % sensorUrl)
+                continue
 
 localDir = '../data/'
 os.makedirs(localDir, exist_ok=True)
     
-getLanuvData(localDir)
+#getLanuvData(localDir)
+
+url = 'http://openair-api.datacolonia.de/?q=SELECT%20value%20FROM%20open_air..r_no%20WHERE%20time%20%3E%20now()%20-%201h%20AND%20id=%27F68654%27'
+r = requests.get(url)
+print(r.text)
