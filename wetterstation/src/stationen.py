@@ -1,5 +1,80 @@
-[
-	{
+time = "1h"       #Mögliche Werte d für Tag und h für Stunde, y ghet nicht!
+
+REQUEST_PARAMETERS = [
+    {
+        "value":"r_no",  #Widerstand NO-Sensor
+        "time": time  
+    },
+    {
+        "value":"r_co",  #Widerstand CO-Sensor
+        "time": time
+    },
+    {
+        "value":"t_cpu", #CPU-Temperatur
+        "time": time
+    }                      
+]
+
+OK_STATIONEN = [
+    {
+        "Station":"F686E2",
+        "Straße": "Leverkusen, Gustav-Heinemann-Straße"
+'''        
+    },
+    {
+        "Station":"F68735",
+        "Straße": "Piccoloministraße Holweide"
+    },       
+    {
+        "Station":"F686D9",
+        "Straße": "Widdersdorf, Blaugasse"
+    },
+    {
+        "Station":"F686D6",
+        "Straße": "Dellbrück, Krokusweg"
+    },
+    {
+        "Station":"F686D0",
+        "Straße": "Nippes, Usambarastraße"
+    },
+    {
+        "Station":"F686A1",
+        "Straße": "Mülheim, Berliner Straße"
+    },
+    {
+        "Station":"F68654",
+        "Straße": "Horrem"
+    },
+    {
+        "Station":"CA28DB",
+        "Straße": "Eigelstein, Lübeckerstraße"
+    },
+    {
+        "Station":"CA2898",
+        "Straße": "Sülz, Mommsenstraße"
+'''        
+    }
+]
+
+LANUV_STATIONEN = [
+    {
+        "Ort": "Leverkusen",
+        "Straße": "Gustav-Heinemann-Straße",
+        "Station": "VLEG",
+        "PLZ": "51377",
+        "Standort": "Verkehr",
+        "csv": "True"
+    },
+    {
+        "Ort": "Leverkusen-Manfort",
+        "Straße": "",
+        "Station": "LEV2",
+        "PLZ": "51373",
+        "Standort": "Hintergrund",
+        "csv": "True"
+'''	
+    };
+    {
 		"Ort": "Köln",
 		"Straße": "Bergisch-Gladbacher Straße",
 		"Station": "KOBG",
@@ -110,21 +185,6 @@
 		"PLZ": "50858",
 		"Standort": "Verkehr",
 		"csv": "False"
-	},
-	{
-		"Ort": "Leverkusen",
-		"Straße": "Gustav-Heinemann-Straße",
-		"Station": "VLEG",
-		"PLZ": "51377",
-		"Standort": "Verkehr",
-		"csv": "True"
-	},
-	{
-		"Ort": "Leverkusen-Manfort",
-		"Straße": "",
-		"Station": "LEV2",
-		"PLZ": "51373",
-		"Standort": "Hintergrund",
-		"csv": "True"
+'''		
 	}
 ]

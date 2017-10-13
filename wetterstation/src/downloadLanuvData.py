@@ -1,37 +1,56 @@
 #! python3 
 
 import os
-import json
 import requests
+import json
 import pandas as pd
+from stationen import LANUV_STATIONEN as lanuvStationen
+from stationen import OK_STATIONEN    as okStationen
+from stationen import REQUEST_PARAMETERS as params
+
+def downloadFile(dst, sensorUrl):
+    try:
+        r = requests.get(sensorUrl)
+        r.raise_for_status()
+        print('Downloading page %s' % sensorUrl)
+        with open(dst, 'w') as file:
+            file.write(r.text)
+    except:
+        print('File not found %s' % sensorUrl)
 
 def getLanuvData(localDir):
     # Alle Stationen aus Datei holen:
     url = 'https://www.lanuv.nrw.de/fileadmin/lanuv/luft/temes/365tage/'
-    lanuvStationen = 'lanuv_stationen.json'
-    stationen = json.load(open(lanuvStationen))
-    for station in stationen:
+    for station in lanuvStationen:
         if station["csv"] == "True":
             fileName = station["Station"] + '.csv'
             dst = localDir + fileName
             sensorUrl = url + fileName
-            # Download the page.
-            try:
-                r = requests.get(sensorUrl)
-                r.raise_for_status()
-                print('Downloading page %s' % sensorUrl)
-                with open(dst, 'w') as file:
-                    file.write(r.text)
-                                            
-            except:
-                print('File not found %s' % sensorUrl)
-                continue
+            downloadFile(dst, sensorUrl)
+
+def getOkData(localDir):
+    for station in okStationen:
+        for i, param in enumerate(params):
+            stat = station["Station"]
+            value = param["value"]
+            time = param["time"]
+            dst = localDir + stat + value + '.json'
+            url = "http://openair-api.datacolonia.de/?q=SELECT value FROM open_air.. {} WHERE time > now() - {} AND id='{}'".format(value, time, stat)
+            #downloadFile(dst, url)
+            r = requests.get(url)
+            r.raise_for_status()
+        
+            data = json.loads(r.text)
+            if i == 0:
+                df = pd.DataFrame(data["results"][0]["series"][0]["values"], columns=["Zeitpunkt", (data["results"][0]["series"][0]["name"])])
+            else:
+                df = pd.merge(df, pd.DataFrame(data["results"][0]["series"][0]["values"], columns=["Zeitpunkt", (data["results"][0]["series"][0]["name"])]), on = "Zeitpunkt")
+        print(df)
+
 
 localDir = '../data/'
 os.makedirs(localDir, exist_ok=True)
-    
-#getLanuvData(localDir)
 
-url = 'http://openair-api.datacolonia.de/?q=SELECT%20value%20FROM%20open_air..r_no%20WHERE%20time%20%3E%20now()%20-%201h%20AND%20id=%27F68654%27'
-r = requests.get(url)
-print(r.text)
+getLanuvData(localDir)    
+getOkData(localDir)
+

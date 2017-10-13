@@ -16,8 +16,9 @@ downDate = str(datetime.date.today() - datetime.timedelta(days=1))
 downloads = 0
 start = time.time()
 
-curs.execute('Select max( sensor_id ) from luftdaten_lev')
+curs.execute('Select sensor_id from lastcheckedsensor')
 maxid = int(curs.fetchone()[0])
+newmaxid = maxid
 
 #Hole Geodaten zu gegebenr Länge/Breite
 def get_geodata(row):
@@ -43,6 +44,8 @@ def get_geodata(row):
 
 #Hole Datei vom luftdaten-Archich:
 def get_file(date, nr, typ = 'sds011'):
+    global newmaxid
+    
     url = 'http://archive.luftdaten.info/'  # starting url
     filename =  date + '_' + typ + '_sensor_' + nr + '.csv'
     sensorUrl = url + date + '/' + filename
@@ -53,7 +56,8 @@ def get_file(date, nr, typ = 'sds011'):
         r.raise_for_status()
     except:
         return
-
+    
+    newmaxid = nr
     sensor = pd.read_csv(sensorUrl, header=0, delimiter = ';')
     row = sensor.iloc[0]
     
@@ -74,8 +78,10 @@ def save_data(row):
 for i in range(maxid + 1, maxid + 1000):
     get_file(downDate, str(i))
     
+curs.execute('''UPDATE lastcheckedsensor SET sensor_id = %s WHERE sensor_id = %s''', (newmaxid, maxid))    
 
 end = time.time()
 
 print(downloads, ' done in ', end -start )
+conns.commit()
 conns.close()

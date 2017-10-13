@@ -33,8 +33,8 @@ for sensor in sensors:
     sensor_id = sensor[0]
     
 # Letzten Eintrag aus MySQL-DB holen:
-    curm.execute('Select max( timestamp ) from luftdaten where sensor_id = "%s"' % (sensor_id))
-    start = curm.fetchone()[0] 
+    curm.execute('Select max( timestamp ) from luftdaten where sensor_id = "{}"'.format(sensor_id))
+    start = curm.fetchone()[0] + datetime.timedelta(hours = 1)
     if start == None:
         start = datetime.datetime.today() - datetime.timedelta(days=3)
 
@@ -92,11 +92,13 @@ for sensor in sensors:
                     except:
                         print('Fehler: ', row)
             cntdow += 1
+            os.remove(dst)
         except:
             print('File not found %s' % sensorUrl)
             cntntf += 1
         conns.commit()
         connm.commit()
+        
 
 
 connm.close()

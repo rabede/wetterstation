@@ -10,3 +10,8 @@ CREATE TABLE `database`.`wetter` (
 	PRIMARY KEY (`timestamp`)
 ) ENGINE=InnoDB;
 
+create table lastcheckedsensor (sensor_id varchar(6));
+insert into lastcheckedsensor (sensor_id) values ('6269');
+
+
+
