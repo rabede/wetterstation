@@ -12,7 +12,7 @@ from asyncio.tasks import wait
 conns = mysql.connector.connect(**SQLCONFIG)
 curs = conns.cursor()
 
-downDate = str(datetime.date.today() - datetime.timedelta(days=1))
+downDate = str(datetime.date.today() - datetime.timedelta(days=2))
 downloads = 0
 start = time.time()
 
@@ -75,7 +75,7 @@ def save_data(row):
     downloads += 1
     wait(5)
 
-for i in range(maxid + 1, maxid + 1000):
+for i in range(maxid + 1, maxid + 100):
     get_file(downDate, str(i))
     
 curs.execute('''UPDATE lastcheckedsensor SET sensor_id = %s WHERE sensor_id = %s''', (newmaxid, maxid))    

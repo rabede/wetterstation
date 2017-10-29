@@ -6,7 +6,7 @@ import xively
 import logging.handlers
 import sys
 from time import sleep
-import urllib2
+#import urllib2
 import requests
 import keys
 import mysql.connector
@@ -182,20 +182,21 @@ def run():
             logger.info('write to file ' + file)
             print >>f,(dataset)
             f.close()
-            try:
-                urllib2.urlopen("http://data.sparkfun.com/input/" + keys.PUBLIC_KEY + 
-                                "?private_key=" + keys.PRIVATE_KEY + 
-                                "&humidity=" + str(dataset[2]) + 
-                                "&israining=" + str(dataset[5]) + 
-                                "&rainfall=" + str(dataset[4]) + 
-                                "&temp=" + str(dataset[1]) +
-                                "&windspeed=" + str(dataset[3]))
-            except:
-                logger.error("Error sparkfun")
+# 20171029 Sparkfun no longer online            
+#            try:
+#                urllib2.urlopen("http://data.sparkfun.com/input/" + keys.PUBLIC_KEY + 
+#                                "?private_key=" + keys.PRIVATE_KEY + 
+#                                "&humidity=" + str(dataset[2]) + 
+#                                "&israining=" + str(dataset[5]) + 
+#                                "&rainfall=" + str(dataset[4]) + 
+#                                "&temp=" + str(dataset[1]) +
+#                                "&windspeed=" + str(dataset[3]))
+#            except:
+#                logger.error("Error sparkfun")
             try:
                 save_sql(dataset)
-            except:
-                logger.error("Error MySQL")
+            except Exception as e:
+                logger.error("Error MySQL: ", repr(e))
             dataset = []
     
         else:

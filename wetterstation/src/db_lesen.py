@@ -49,5 +49,5 @@ for row in df.itertuples():
 
 #print(df['temp'].agg(min))
 
-plt.plot(df['down'])
+plt.plot(df['temp'])
 plt.show()

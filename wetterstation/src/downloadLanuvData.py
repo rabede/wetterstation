@@ -45,12 +45,14 @@ def getOkData(localDir):
                 df = pd.DataFrame(data["results"][0]["series"][0]["values"], columns=["Zeitpunkt", (data["results"][0]["series"][0]["name"])])
             else:
                 df = pd.merge(df, pd.DataFrame(data["results"][0]["series"][0]["values"], columns=["Zeitpunkt", (data["results"][0]["series"][0]["name"])]), on = "Zeitpunkt")
-        print(df)
+        df['sensor_id'] = stat
+        df = df.rename(index=str, columns={"Zeitpunkt": 'timestamp'})
+        df.to_sql()
 
 
 localDir = '../data/'
 os.makedirs(localDir, exist_ok=True)
 
-getLanuvData(localDir)    
+#getLanuvData(localDir)    
 getOkData(localDir)
 
