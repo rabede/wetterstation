@@ -47,11 +47,11 @@ for sensor in sensors:
         sensorUrl = url + downDate + '/' + fileName  # Download the page.
         try:
             if os.path.isfile(dst):
-                print('%s already downloaded' % sensorUrl)
+                print('%s already downloaded' % fileName)
                 continue
             else:
                 urlretrieve(sensorUrl, dst)
-                print('Downloading page %s' % sensorUrl)
+                print('%s downloading ' % fileName)
             
             with open(dst, newline='') as csvfile:
                 reader = csv.DictReader(csvfile, delimiter=';', quotechar='|')
@@ -96,7 +96,7 @@ for sensor in sensors:
             cntdow += 1
             os.remove(dst)
         except:
-            print('File not found %s' % sensorUrl)
+            print('%s not found' % fileName)
             cntntf += 1
         conns.commit()
         connm.commit()
