@@ -4,9 +4,13 @@ import os
 import requests
 import json
 import pandas as pd
+from sqlalchemy import create_engine
+
 from stationen import LANUV_STATIONEN as lanuvStationen
 from stationen import OK_STATIONEN    as okStationen
 from stationen import REQUEST_PARAMETERS as params
+
+engine = create_engine('sqlite:///../data/wetter.sqlite')
 
 def downloadFile(dst, sensorUrl):
     try:
@@ -46,8 +50,9 @@ def getOkData(localDir):
             else:
                 df = pd.merge(df, pd.DataFrame(data["results"][0]["series"][0]["values"], columns=["Zeitpunkt", (data["results"][0]["series"][0]["name"])]), on = "Zeitpunkt")
         df['sensor_id'] = stat
-        df = df.rename(index=str, columns={"Zeitpunkt": 'timestamp'})
-        df.to_sql()
+        df = df.rename(index=str, columns={"Zeitpunkt": 'timestamp'}).set_index('timestamp')
+        print(df)
+        df.to_sql('noxdaten', engine, if_exists='append')
 
 
 localDir = '../data/'

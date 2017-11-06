@@ -1,4 +1,4 @@
-time = "1h"       #Mögliche Werte d für Tag und h für Stunde, y ghet nicht!
+time = "365d"       #Mögliche Werte d für Tag und h für Stunde, y ghet nicht!
 
 REQUEST_PARAMETERS = [
     {
