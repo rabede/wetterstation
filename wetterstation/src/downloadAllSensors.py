@@ -29,6 +29,9 @@ def get_geodata(row):
     params = {'lat':lat, 'lon':lon, 'format':'json'}
     res =  requests.get(url, params = params)
     
+    if res.json()['address']['city'] != 'Leverkusen':
+        return
+    
     try:
         row['ort'] = res.json()['address']['suburb']
     except:
@@ -41,6 +44,8 @@ def get_geodata(row):
         except:
             row['adresse'] = ''
     row['plz'] = res.json()['address']['postcode']
+    
+    save_data(row)
 
 #Hole Datei vom luftdaten-Archich:
 def get_file(date, nr, typ = 'sds011'):
@@ -63,8 +68,6 @@ def get_file(date, nr, typ = 'sds011'):
     
     if row['lon'] >= 6.89 and row['lon'] <= 7.12  and row['lat'] >= 51.01 and row['lat'] <= 51.1:
         get_geodata(row)
-        save_data(row)
-
 
 def save_data(row):    
     global downloads    
