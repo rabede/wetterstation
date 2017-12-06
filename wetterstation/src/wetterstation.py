@@ -10,6 +10,7 @@ from time import sleep
 import requests
 import keys
 import mysql.connector
+import dropbox
 
 LOG_FILENAME = keys.DIR + "wetter.log"
 LOG_LEVEL = logging.ERROR  # Could be e.g. "DEBUG" or "WARNING"
@@ -116,6 +117,7 @@ def calc_down(time, value):
 #Datumswechsel: neues Datum merken, Gesamtniederschlag aktualisieren
 #               aktueller Niederschlag auf 0
     else:
+        upload_Dropbox(today)
         today = datetime.datetime.now().day
         logger.info('Date change: ' + str(today))
         total_down = value
@@ -133,6 +135,14 @@ def save_sql(data):
     con.commit()
     con.close()
 
+def upload_Dropbox(today):
+    dbx = dropbox(keys.DROPBOX_TOKEN)
+    filename = today.strftime("%Y%m%d") +  '.txt'
+    file = keys.DIR + filename
+    target = '/' + filename
+    with open(file, 'rb') as f:
+            dbx.files_upload(f.read(), target)
+            
 
 #Hauptprogramm, Schleife liest von ser und bereitet die Daten auf 
 def run():
