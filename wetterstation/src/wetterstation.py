@@ -136,12 +136,15 @@ def save_sql(data):
     con.close()
 
 def upload_Dropbox(today):
-    dbx = dropbox(keys.DROPBOX_TOKEN)
-    filename = today.strftime("%Y%m%d") +  '.txt'
-    file = keys.DIR + filename
-    target = '/' + filename
-    with open(file, 'rb') as f:
-            dbx.files_upload(f.read(), target)
+    try:
+        dbx = dropbox.Dropbox(keys.DROPBOX_TOKEN)
+        filename = today.strftime("%Y%m%d") +  '.txt'
+        file = keys.DIR + filename
+        target = '/' + filename
+        with open(file, 'rb') as f:
+                dbx.files_upload(f.read(), target)
+    except:
+        logger.error('Dropbox-Fehler')
             
 
 #Hauptprogramm, Schleife liest von ser und bereitet die Daten auf 
