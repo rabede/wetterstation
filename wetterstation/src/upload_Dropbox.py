@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import dropbox, keys
 from datetime import date, timedelta
 
