@@ -117,7 +117,7 @@ def calc_down(time, value):
 #Datumswechsel: neues Datum merken, Gesamtniederschlag aktualisieren
 #               aktueller Niederschlag auf 0
     else:
-        upload_Dropbox(today)
+        upload_Dropbox()
         today = datetime.datetime.now().day
         logger.info('Date change: ' + str(today))
         total_down = value
@@ -135,10 +135,11 @@ def save_sql(data):
     con.commit()
     con.close()
 
-def upload_Dropbox(today):
+def upload_Dropbox():
     try:
         dbx = dropbox.Dropbox(keys.DROPBOX_TOKEN)
-        filename = today.strftime("%Y%m%d") +  '.txt'
+        yesterday = datetime.date.today() - datetime.timedelta(1) 
+        filename = yesterday.strftime("%Y%m%d") +  '.txt'
         file = keys.DIR + filename
         target = '/' + filename
         with open(file, 'rb') as f:
