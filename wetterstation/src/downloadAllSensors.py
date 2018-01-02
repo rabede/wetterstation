@@ -29,8 +29,11 @@ def get_geodata(row):
     params = {'lat':lat, 'lon':lon, 'format':'json'}
     res =  requests.get(url, params = params)
     
-    if res.json()['address']['city'] != 'Leverkusen':
-        return
+    try: 
+        if res.json()['address']['city'] != 'Leverkusen':
+            return
+    except:
+        print(res.json())
     
     try:
         row['ort'] = res.json()['address']['suburb']
