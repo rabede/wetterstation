@@ -80,6 +80,8 @@ def save_data(row):
     conns.commit()
     downloads += 1
     wait(5)
+    
+print(maxid)    
 
 for i in range(maxid + 1, maxid + 100):
     get_file(downDate, str(i))
@@ -89,5 +91,6 @@ curs.execute('''UPDATE lastcheckedsensor SET sensor_id = %s WHERE sensor_id = %s
 end = time.time()
 
 print(downloads, ' done in ', end -start )
+print(newmaxid)
 conns.commit()
 conns.close()

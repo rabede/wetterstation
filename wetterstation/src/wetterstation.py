@@ -11,6 +11,7 @@ import requests
 import keys
 import mysql.connector
 import dropbox
+import paho.mqtt.publish as publish
 
 LOG_FILENAME = keys.DIR + "wetter.log"
 LOG_LEVEL = logging.ERROR  # Could be e.g. "DEBUG" or "WARNING"
@@ -46,12 +47,21 @@ sys.stdout = MyLogger(logger, logging.INFO)
 # Replace stderr with logging to file at ERROR level
 sys.stderr = MyLogger(logger, logging.ERROR)
 
-# api initialisieren
+# Xively api initialisieren
 api = xively.XivelyAPIClient(keys.API_KEY)
 try:
     feed = api.feeds.get(keys.FEED_ID)
 except:
     logger.error("Fehler: api.feeds.get(keys.FEED_ID)")
+
+
+# ThingSpeak initialisieren:
+# Set the transport mode to WebSockets.
+tTransport = "websockets"
+tPort = 80
+# Create the topic string.
+topic = "channels/" + keys.channelID + "/publish/" + keys.writeAPIKey
+
 
 
 # Niederschlag total und heutiges Datum merken
@@ -196,6 +206,17 @@ def run():
             logger.info('write to file ' + file)
             print >>f,(dataset)
             f.close()
+            
+#ThingSpeak:
+
+            # build the payload string.
+            payload = "field1=" + str(hum) + "&field2=" + str(down) + "&field3=" + str(temp) + "&field4=" + str(vel)
+            # attempt to publish this data to the topic.
+            try:
+                publish.single(topic, payload, hostname=keys.mqttHost, transport=tTransport, port=tPort,auth={'username':keys.mqttUsername,'password':keys.mqttAPIKey})
+            except:
+                print ("ThingSpeak Error")
+            
 # 20171029 Sparkfun no longer online            
 #            try:
 #                urllib2.urlopen("http://data.sparkfun.com/input/" + keys.PUBLIC_KEY + 

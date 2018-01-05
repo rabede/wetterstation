@@ -24,12 +24,14 @@ else:
 curs = conns.cursor()
 
 if db == 'M':
-    curs.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter where date between %s and %s ', (start, ende))
-    df = pd.DataFrame(curs.fetchall(), columns=['date', 'time', 'temp', 'hum', 'wind', 'down', 'rain'])
+    curs.execute('select timestamp, temperatur, humidity, windspeed, downfall, rain from  wetter where timestamp between %s and %s ', (start, ende))
+    df = pd.DataFrame(curs.fetchall(), columns=['timestamp', 'temp', 'hum', 'wind', 'down', 'rain'])
 else:
     curs.execute('select date, time, temperatur, humidity, windspeed, downfall, rain from  wetter where date between ? and ? ', (start, ende))
     df = pd.DataFrame(curs.fetchall(), columns=['date', 'time', 'temp', 'hum', 'wind', 'down', 'rain'])
 
+
+df = df.set_index('timestamp')
 
 
 # df['c'] = df[['a','b']].apply(lambda x: do stuff with x[0] and x[1] here, axis=1) 
