@@ -5,3 +5,4 @@
 /test_sqlalchemy.py
 /.ipynb_checkpoints/
 /__pycache__/
+/ThingSpeak.py

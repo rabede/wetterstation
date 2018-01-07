@@ -1,20 +1,19 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import datetime
 import serial
-import xively
+#import xively
 import logging.handlers
 import sys
 from time import sleep
-#import urllib2
-import requests
+#import requests
 import keys
 import mysql.connector
 import dropbox
 import paho.mqtt.publish as publish
 
-LOG_FILENAME = keys.DIR + "wetter.log"
-LOG_LEVEL = logging.ERROR  # Could be e.g. "DEBUG" or "WARNING"
+LOG_FILENAME = "wetter.log"
+LOG_LEVEL = logging.DEBUG  # Could be e.g. "DEBUG" or "WARNING"
 
 # Configure logging to log to a file, making a new file at midnight and keeping the last 3 day's data
 # Give the logger a unique name (good practice)
@@ -47,13 +46,14 @@ sys.stdout = MyLogger(logger, logging.INFO)
 # Replace stderr with logging to file at ERROR level
 sys.stderr = MyLogger(logger, logging.ERROR)
 
+'''
 # Xively api initialisieren
 api = xively.XivelyAPIClient(keys.API_KEY)
 try:
     feed = api.feeds.get(keys.FEED_ID)
 except:
     logger.error("Fehler: api.feeds.get(keys.FEED_ID)")
-
+'''
 
 # ThingSpeak initialisieren:
 # Set the transport mode to WebSockets.
@@ -150,7 +150,7 @@ def upload_Dropbox():
         dbx = dropbox.Dropbox(keys.DROPBOX_TOKEN)
         yesterday = datetime.date.today() - datetime.timedelta(1) 
         filename = yesterday.strftime("%Y%m%d") +  '.txt'
-        file = keys.DIR + filename
+        file = filename
         target = '/' + filename
         with open(file, 'rb') as f:
                 dbx.files_upload(f.read(), target)
@@ -174,34 +174,34 @@ def run():
 
         if name == "Temperatur":
             temp = prepare_value(" C", value)
-            update_data("Temperatur", temp)
+#            update_data("Temperatur", temp)
             dataset.append(now.strftime("%Y-%m-%d %H:%M"))
             dataset.append(temp)
     
         elif name == "Luftfeuchtigkeit":
             hum= prepare_value(" %", value)
-            update_data("Luftfeuchtigkeit", hum)
+#            update_data("Luftfeuchtigkeit", hum)
             dataset.append(hum)
     
         elif name == "Windgeschw.":
             vel = prepare_value(" k", value)
-            update_data("Windgeschwindigkeit", vel)
+ #           update_data("Windgeschwindigkeit", vel)
             dataset.append(vel)
     
         elif name == "Niederschlag":
             down = prepare_value(" (", value)
             down = calc_down(now, down)
-            update_data("Niederschlag", down)
+#            update_data("Niederschlag", down)
             dataset.append(down)
     
         elif name == "Regen":
             value = value.replace("Nein","0")
             value = value.replace("Ja","1")
             rain = prepare_value(" (", value)
-            update_data("Regen", rain)
+#            update_data("Regen", rain)
             dataset.append(rain)
             
-            file = keys.DIR + str(datetime.datetime.today().strftime("%Y%m%d")) +  '.txt'
+            file = str(datetime.datetime.today().strftime("%Y%m%d")) +  '.txt'
             f=open(file,'a')
             logger.info('write to file ' + file)
             print >>f,(dataset)
@@ -217,17 +217,6 @@ def run():
             except:
                 print ("ThingSpeak Error")
             
-# 20171029 Sparkfun no longer online            
-#            try:
-#                urllib2.urlopen("http://data.sparkfun.com/input/" + keys.PUBLIC_KEY + 
-#                                "?private_key=" + keys.PRIVATE_KEY + 
-#                                "&humidity=" + str(dataset[2]) + 
-#                                "&israining=" + str(dataset[5]) + 
-#                                "&rainfall=" + str(dataset[4]) + 
-#                                "&temp=" + str(dataset[1]) +
-#                                "&windspeed=" + str(dataset[3]))
-#            except:
-#                logger.error("Error sparkfun")
             try:
                 save_sql(dataset)
             except Exception as e:
