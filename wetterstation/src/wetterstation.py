@@ -15,7 +15,7 @@ import dropbox
 import keys
 
 
-LOG_FILENAME =  "wetter.log"
+LOG_FILENAME =  keys.DIR + "wetter.log"
 LOG_LEVEL = logging.DEBUG  # Could be e.g. "DEBUG" or "WARNING"
 
 # Configure logging to log to a file, making a new file at midnight and keeping the last 3 day's data
@@ -148,7 +148,7 @@ def upload_Dropbox():
         dbx = dropbox.Dropbox(keys.DROPBOX_TOKEN)
         yesterday = datetime.date.today() - datetime.timedelta(1) 
         filename = yesterday.strftime("%Y%m%d") +  '.txt'
-        file =  filename
+        file =  keys.DIR + filename
         target = '/' + filename
         with open(file, 'rb') as f:
                 dbx.files_upload(f.read(), target)
@@ -199,7 +199,7 @@ def run():
             update_data("Regen", rain)
             dataset.append(rain)
             
-            file =  str(datetime.datetime.today().strftime("%Y%m%d")) +  '.txt'
+            file =  keys.DIR + str(datetime.datetime.today().strftime("%Y%m%d")) +  '.txt'
             f=open(file,'a')
             logger.info('write to file ' + file)
             print >>f,(dataset)
