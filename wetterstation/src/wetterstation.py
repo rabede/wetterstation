@@ -1,18 +1,21 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import datetime
 import serial
-#import xively
 import logging.handlers
 import sys
 from time import sleep
-#import requests
-import keys
+import requests
+
+import xively
+import urllib2
 import mysql.connector
 import dropbox
-import paho.mqtt.publish as publish
 
-LOG_FILENAME = "wetter.log"
+import keys
+
+
+LOG_FILENAME =  "wetter.log"
 LOG_LEVEL = logging.DEBUG  # Could be e.g. "DEBUG" or "WARNING"
 
 # Configure logging to log to a file, making a new file at midnight and keeping the last 3 day's data
@@ -42,31 +45,22 @@ class MyLogger(object):
             self.logger.log(self.level, message.rstrip())
 
 # Replace stdout with logging to file at INFO level
-sys.stdout = MyLogger(logger, logging.INFO)
+sys.stdout = MyLogger(logger, logging.DEBUG)
 # Replace stderr with logging to file at ERROR level
-sys.stderr = MyLogger(logger, logging.ERROR)
+sys.stderr = MyLogger(logger, logging.DEBUG)
 
-'''
-# Xively api initialisieren
+# api initialisieren
 api = xively.XivelyAPIClient(keys.API_KEY)
 try:
     feed = api.feeds.get(keys.FEED_ID)
 except:
     logger.error("Fehler: api.feeds.get(keys.FEED_ID)")
-'''
-
-# ThingSpeak initialisieren:
-# Set the transport mode to WebSockets.
-tTransport = "websockets"
-tPort = 80
-# Create the topic string.
-topic = "channels/" + keys.channelID + "/publish/" + keys.writeAPIKey
-
 
 
 # Niederschlag total und heutiges Datum merken
 total_down = -1
 today = -1
+
 
 def init_serial_port(logger):
 # initialize serial port
@@ -79,6 +73,7 @@ def init_serial_port(logger):
         return None
     logger.info('Serial Port initialised: ' + ser.name)
     return ser
+
 
 def update_data(stream, value):
     logger.info(stream + ": " + value) 
@@ -96,6 +91,7 @@ def update_data(stream, value):
         datastream.update()
     except (requests.HTTPError, requests.ConnectionError) as e:
         logger.error("Error({0}): {1}".format(e.errno, e.strerror))
+
 
 def prepare_value(split, raw):
     value,hexvalue=raw.split(split)
@@ -133,6 +129,7 @@ def calc_down(time, value):
         total_down = value
         return "0.0"
     
+
 def save_sql(data):
     con = mysql.connector.connect(**keys.SQLCONFIG)
     curs = con.cursor()
@@ -145,12 +142,13 @@ def save_sql(data):
     con.commit()
     con.close()
 
+
 def upload_Dropbox():
     try:
         dbx = dropbox.Dropbox(keys.DROPBOX_TOKEN)
         yesterday = datetime.date.today() - datetime.timedelta(1) 
         filename = yesterday.strftime("%Y%m%d") +  '.txt'
-        file = filename
+        file =  filename
         target = '/' + filename
         with open(file, 'rb') as f:
                 dbx.files_upload(f.read(), target)
@@ -174,49 +172,47 @@ def run():
 
         if name == "Temperatur":
             temp = prepare_value(" C", value)
-#            update_data("Temperatur", temp)
+            update_data("Temperatur", temp)
             dataset.append(now.strftime("%Y-%m-%d %H:%M"))
             dataset.append(temp)
     
         elif name == "Luftfeuchtigkeit":
             hum= prepare_value(" %", value)
-#            update_data("Luftfeuchtigkeit", hum)
+            update_data("Luftfeuchtigkeit", hum)
             dataset.append(hum)
     
         elif name == "Windgeschw.":
             vel = prepare_value(" k", value)
- #           update_data("Windgeschwindigkeit", vel)
+            update_data("Windgeschwindigkeit", vel)
             dataset.append(vel)
     
         elif name == "Niederschlag":
             down = prepare_value(" (", value)
             down = calc_down(now, down)
-#            update_data("Niederschlag", down)
+            update_data("Niederschlag", down)
             dataset.append(down)
     
         elif name == "Regen":
             value = value.replace("Nein","0")
             value = value.replace("Ja","1")
             rain = prepare_value(" (", value)
-#            update_data("Regen", rain)
+            update_data("Regen", rain)
             dataset.append(rain)
             
-            file = str(datetime.datetime.today().strftime("%Y%m%d")) +  '.txt'
+            file =  str(datetime.datetime.today().strftime("%Y%m%d")) +  '.txt'
             f=open(file,'a')
             logger.info('write to file ' + file)
             print >>f,(dataset)
             f.close()
-            
-#ThingSpeak:
 
-            # build the payload string.
-            payload = "field1=" + str(hum) + "&field2=" + str(down) + "&field3=" + str(temp) + "&field4=" + str(vel)
-            # attempt to publish this data to the topic.
             try:
-                publish.single(topic, payload, hostname=keys.mqttHost, transport=tTransport, port=tPort,auth={'username':keys.mqttUsername,'password':keys.mqttAPIKey})
+                urllib2.urlopen("https://api.thingspeak.com/update?api_key=" + keys.writeAPIKey + "&field1=" + str(dataset[2])
+                             + "&field2=" + str(dataset[4])
+                             + "&field3=" + str(dataset[1])
+                             + "&field4=" + str(dataset[3]))
             except:
-                print ("ThingSpeak Error")
-            
+                logger.error("Error ThingSpeak")
+
             try:
                 save_sql(dataset)
             except Exception as e:
