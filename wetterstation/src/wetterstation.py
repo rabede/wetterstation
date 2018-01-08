@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import datetime
 import serial
@@ -8,7 +8,6 @@ from time import sleep
 import requests
 
 import xively
-import urllib2
 import mysql.connector
 import dropbox
 
@@ -206,10 +205,11 @@ def run():
             f.close()
 
             try:
-                urllib2.urlopen("https://api.thingspeak.com/update?api_key=" + keys.writeAPIKey + "&field1=" + str(dataset[2])
+                r = requests.get("https://api.thingspeak.com/update?api_key=" + keys.writeAPIKey + "&field1=" + str(dataset[2])
                              + "&field2=" + str(dataset[4])
                              + "&field3=" + str(dataset[1])
                              + "&field4=" + str(dataset[3]))
+                logger.debug(r.raise_for_status())
             except:
                 logger.error("Error ThingSpeak")
 
