@@ -35,15 +35,12 @@ for sensor in sensors:
     sensor_id = sensor[0]
     
 # Letzten Eintrag aus MySQL-DB holen:
-#    curm.execute('Select max( timestamp ) from luftdaten where sensor_id = "{}"'.format(sensor_id))
-#    start = curm.fetchone()[0]
-#    if start == None:
-#        start = datetime.datetime.today() - datetime.timedelta(days=3)
-#    else:
-#        start = start + datetime.timedelta(hours = 1)
-
-    start = datetime.datetime.strptime('2017-12-08', '%Y-%m-%d')
-    ende = datetime.datetime.strptime('2017-12-09', '%Y-%m-%d')
+    curm.execute('Select max( timestamp ) from luftdaten where sensor_id = "{}"'.format(sensor_id))
+    start = curm.fetchone()[0]
+    if start == None:
+        start = datetime.datetime.today() - datetime.timedelta(days=3)
+    else:
+        start = start + datetime.timedelta(hours = 1)
 
     for dt in rrule(DAILY, dtstart=start, until=ende):
         downDate = dt.strftime("%Y-%m-%d")
