@@ -12,6 +12,7 @@ import mysql.connector
 import dropbox
 
 import keys
+from IPython.extensions.tests.test_autoreload import noop
 
 
 LOG_FILENAME =  keys.DIR + "wetter.log"
@@ -42,6 +43,9 @@ class MyLogger(object):
         # Only log if there is a message (not just a new line)
         if message.rstrip() != "":
             self.logger.log(self.level, message.rstrip())
+            
+    def flush(self):
+        noop
 
 # Replace stdout with logging to file at INFO level
 sys.stdout = MyLogger(logger, logging.DEBUG)
@@ -65,8 +69,9 @@ def init_serial_port(logger):
 # initialize serial port
     try:
         ser = serial.Serial(port='/dev/ttyAMA0', baudrate=4800, bytesize=8, parity="N", stopbits=1)
-        ser.write("\x02\x02\xfb\x01")
-        ser.write("\x02\x02\xf2\x01")
+        #in Python3 we need bytes here (b) no more strings!
+        ser.write(b"\x02\x02\xfb\x01")
+        ser.write(b"\x02\x02\xf2\x01")
     except (serial.SerialException) as e:
         logger.error("Error({0}): {1}".format(e.errno, e.strerror))
         return None
