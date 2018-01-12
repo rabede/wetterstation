@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import datetime
 import serial
 import logging.handlers
@@ -7,7 +6,6 @@ import sys
 from time import sleep
 import requests
 
-import xively
 import mysql.connector
 import dropbox
 
@@ -53,13 +51,6 @@ sys.stdout = MyLogger(logger, logging.WARN)
 # Replace stderr with logging to file at ERROR level
 sys.stderr = MyLogger(logger, logging.WARN)
 
-# api initialisieren
-api = xively.XivelyAPIClient(keys.API_KEY)
-try:
-    feed = api.feeds.get(keys.FEED_ID)
-except:
-    logger.error("Fehler: api.feeds.get(keys.FEED_ID)")
-
 # Niederschlag total und heutiges Datum merken
 total_down = -1
 today = -1
@@ -77,24 +68,6 @@ def init_serial_port(logger):
         return None
     logger.info('Serial Port initialised: ' + ser.name)
     return ser
-
-
-def update_data(stream, value):
-    logger.info(stream + ": " + value) 
-    try:
-        datastream = feed.datastreams.get(stream)
-        datastream.current_value = value
-        datastream.max_value = None
-        datastream.min_value = None
-        datastream.at = datetime.datetime.utcnow()
-    except:
-        logger.error("Fehler: feed.datastreams.get(stream)")
-        return
-
-    try:
-        datastream.update()
-    except (requests.HTTPError, requests.ConnectionError) as e:
-        logger.error("Error({0}): {1}".format(e.errno, e.strerror))
 
 
 def prepare_value(split, raw):
@@ -176,37 +149,32 @@ def run():
 
         if name == "Temperatur":
             temp = prepare_value(" C", value)
-            update_data("Temperatur", temp)
             dataset.append(now.strftime("%Y-%m-%d %H:%M"))
             dataset.append(temp)
     
         elif name == "Luftfeuchtigkeit":
             hum = prepare_value(" %", value)
-            update_data("Luftfeuchtigkeit", hum)
             dataset.append(hum)
     
         elif name == "Windgeschw.":
             vel = prepare_value(" k", value)
-            update_data("Windgeschwindigkeit", vel)
             dataset.append(vel)
     
         elif name == "Niederschlag":
             down = prepare_value(" (", value)
             down = calc_down(now, down)
-            update_data("Niederschlag", down)
             dataset.append(down)
     
         elif name == "Regen":
             value = value.replace("Nein", "0")
             value = value.replace("Ja", "1")
             rain = prepare_value(" (", value)
-            update_data("Regen", rain)
             dataset.append(rain)
             
             file = keys.DIR + str(datetime.datetime.today().strftime("%Y%m%d")) + '.txt'
             f = open(file, 'a')
             logger.info('write to file ' + file)
-            f.write(str(dataset))
+            f.write(str(dataset) + '\n')
             f.close()
 
             try:
