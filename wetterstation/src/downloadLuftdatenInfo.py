@@ -33,10 +33,12 @@ sensors = curm.fetchall()
 for sensor in sensors:
     sensor_type = sensor[1]
     sensor_id = sensor[0]
+    print(sensor_type, sensor_id, end=' ')
     
 # Letzten Eintrag aus MySQL-DB holen:
     curm.execute('Select max( timestamp ) from luftdaten where sensor_id = "{}"'.format(sensor_id))
     start = curm.fetchone()[0]
+    print(start)
     if start == None:
         start = datetime.datetime.today() - datetime.timedelta(days=3)
     else:
@@ -44,6 +46,7 @@ for sensor in sensors:
 
     for dt in rrule(DAILY, dtstart=start, until=ende):
         downDate = dt.strftime("%Y-%m-%d")
+        print(downDate)
         fileName = downDate + '_' + sensor_type.lower() + '_sensor_' + sensor_id + '.csv'
         dst = localDir + fileName
         sensorUrl = url + downDate + '/' + fileName  # Download the page.
