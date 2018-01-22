@@ -46,7 +46,6 @@ for sensor in sensors:
 
     for dt in rrule(DAILY, dtstart=start, until=ende):
         downDate = dt.strftime("%Y-%m-%d")
-        print(downDate)
         fileName = downDate + '_' + sensor_type.lower() + '_sensor_' + sensor_id + '.csv'
         dst = localDir + fileName
         sensorUrl = url + downDate + '/' + fileName  # Download the page.
