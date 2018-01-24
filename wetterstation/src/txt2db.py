@@ -8,10 +8,11 @@ import sqlite3
 import os
 import openpyxl
 import keys
+import getpass
 
 conns = sqlite3.connect(**keys.SQLITECONFIG)
 curs = conns.cursor()
-data_dir = "../data"
+data_dir = "/home/" + getpass.getuser() + "/Dropbox/Apps/51381/"
 
 def save_data(curs, data):
     try:
