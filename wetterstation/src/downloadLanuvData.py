@@ -58,6 +58,6 @@ def getOkData(localDir):
 localDir = '../data/'
 os.makedirs(localDir, exist_ok=True)
 
-#getLanuvData(localDir)    
+getLanuvData(localDir)    
 getOkData(localDir)
 
