@@ -1,9 +1,4 @@
-"""
-Book: Building RESTful Python Web Services
-Chapter 5: Developing RESTful APIs with Flask
-Author: Gaston C. Hillar - Twitter.com/gastonhillar
-Publisher: Packt Publishing Ltd. - http://www.packtpub.com
-"""
+#!/usr/bin/env python3
 class MeasureModel:
     def __init__(self, timestamp, sensor_id, software_version, p10, p2, temperature, humidity, pressure):
         self.timestamp = timestamp

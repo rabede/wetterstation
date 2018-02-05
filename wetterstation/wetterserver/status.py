@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def is_informational(code):
     return code >= 100 and code <= 199
 
