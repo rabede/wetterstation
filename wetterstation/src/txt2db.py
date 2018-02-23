@@ -9,6 +9,7 @@ import os
 import openpyxl
 import keys
 import getpass
+import db_clean
 
 conns = sqlite3.connect(**keys.SQLITECONFIG)
 curs = conns.cursor()
@@ -69,3 +70,5 @@ loop_dir(data_dir)
 
 conns.commit()
 conns.close()
+
+db_clean
