@@ -8,7 +8,6 @@ import sqlite3
 import pandas as pd
 import mysql.connector
 import keys
-import downloadAllSensors
 
 
 conns = sqlite3.connect(**keys.SQLITECONFIG)
@@ -72,5 +71,3 @@ conns.commit()
 conns.close()
 connm.commit()
 connm.close()
-
-downloadAllSensors

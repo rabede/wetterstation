@@ -10,7 +10,6 @@ from builtins import range
 from asyncio.tasks import wait
 import json
 import check_locality as cl
-import downloadLuftdatenInfo
 
 conns = mysql.connector.connect(**SQLCONFIG)
 curs = conns.cursor()
@@ -104,5 +103,3 @@ print(downloads, ' done in ', end -start )
 print(newmaxid)
 conns.commit()
 conns.close()
-
-downloadLuftdatenInfo
