@@ -1,4 +1,4 @@
-#! python3
+#!/usr/bin/env python3
 # downloadLuftdatenInfo.py - Downloads data from http://archive.luftdaten.info/ 
 
 import os, csv, sqlite3
