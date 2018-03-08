@@ -14,7 +14,7 @@ import check_locality as cl
 conns = mysql.connector.connect(**SQLCONFIG)
 curs = conns.cursor()
 
-downDate = str(datetime.date.today() - datetime.timedelta(days=2))
+downDate = str(datetime.date.today() - datetime.timedelta(days=1))
 downloads = 0
 start = time.time()
 
