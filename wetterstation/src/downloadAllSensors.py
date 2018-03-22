@@ -79,12 +79,15 @@ def get_file(date, nr, typ = 'sds011'):
 
 def save_data(row):    
     global downloads    
-    curs.execute('''INSERT IGNORE into luftdaten_lev (sensor_id, sensor_type, location, lat, lon, adresse, plz, ort )       
-                       VALUES (%s,%s,%s, %s, %s, %s, %s, %s)''', (str(row['sensor_id']), row['sensor_type'], str(row['location']), float(row['lat']), float(row['lon']), row['adresse'], row['plz'], row['ort']))
-        
-    conns.commit()
-    downloads += 1
-    wait(5)
+    try:
+        curs.execute('''INSERT IGNORE into luftdaten_lev (sensor_id, sensor_type, location, lat, lon, adresse, plz, ort )       
+                           VALUES (%s,%s,%s, %s, %s, %s, %s, %s)''', (str(row['sensor_id']), row['sensor_type'], str(row['location']), float(row['lat']), float(row['lon']), row['adresse'], row['plz'], row['ort']))
+            
+        conns.commit()
+        downloads += 1
+        wait(5)
+    except:
+        print('SQL-Fehler: ' + str(row))
     
 print(maxid)    
 

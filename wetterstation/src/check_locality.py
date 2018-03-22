@@ -16,7 +16,7 @@ def get_geodata(row, osmdata):
     try:
         city = res.json()['address']['city']
         if city != 'Leverkusen':
-            print(row['sensor_id'] + ' in ' +  res.json('city'))
+            print(row['sensor_id'] + ' in ' +  city)
             return
         
         row['ort'] = res.json()['address']['suburb']
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     
     osmdata = {}
     for file in os.listdir('../data'):
-        if file.endswith('.csv') and file.startswith('2018-'):
+        if file.endswith('.csv') and file.startswith('2018-03-21'):
     
             sensor = pd.read_csv('../data/' + file, header=0, delimiter=';')
             row = sensor.iloc[0]
