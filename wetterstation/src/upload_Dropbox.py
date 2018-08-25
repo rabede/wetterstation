@@ -1,6 +1,8 @@
 #!/usr/bin/env python
-import dropbox, keys
 from datetime import date, timedelta
+
+import dropbox, keys
+
 
 dbx = dropbox.Dropbox(keys.DROPBOX_TOKEN)
 

@@ -5,9 +5,11 @@ Created on 16.01.2017
 @author: bell
 '''
 import sqlite3
-import pandas as pd
+
 import mysql.connector
+
 import keys
+import pandas as pd
 
 
 conns = sqlite3.connect(**keys.SQLITECONFIG)

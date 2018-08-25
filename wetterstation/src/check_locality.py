@@ -1,7 +1,8 @@
 #! python3
-import pandas as pd
-import os, requests
 import json
+import os, requests
+
+import pandas as pd
 
 
 # Hole Geodaten zu gegebenr Länge/Breite

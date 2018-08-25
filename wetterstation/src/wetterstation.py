@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 import datetime
-import serial
 import logging.handlers
+import requests
 import sys
 from time import sleep
-import requests
 
-import mysql.connector
 import dropbox
+import mysql.connector
 
 import keys
+import serial
+
 
 LOG_FILENAME = keys.DIR + "wetter.log"
 LOG_LEVEL = logging.WARN  # Could be e.g. "DEBUG" or "WARNING"

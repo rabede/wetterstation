@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-import serial
 import datetime, time
 import sys
 
-# class adapted from https://github.com/FriskByBergen/RPiParticle/blob/master/lib/sds011.py
+import serial
 
+
+# class adapted from https://github.com/FriskByBergen/RPiParticle/blob/master/lib/sds011.py
 class SDS011(object):
     msg_start  = 170
     msg_cmd    = 192

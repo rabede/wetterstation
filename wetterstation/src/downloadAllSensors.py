@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 # downloadLuftdatenInfo.py - Downloads data from http://archive.luftdaten.info/ 
 
-from keys import SQLCONFIG
-import mysql.connector
+from asyncio.tasks import wait
+from builtins import range
+import json
 import requests
 import time, datetime
-import pandas as pd
-from builtins import range
-from asyncio.tasks import wait
-import json
+
+import mysql.connector
+
 import check_locality as cl
+from keys import SQLCONFIG
+import pandas as pd
+
 
 conns = mysql.connector.connect(**SQLCONFIG)
 curs = conns.cursor()

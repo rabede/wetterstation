@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # downloadLuftdatenInfo.py - Downloads data from http://archive.luftdaten.info/ 
 
+import datetime
 import os, csv, sqlite3
 from urllib.request import urlretrieve
-import datetime
-from dateutil.rrule import rrule, DAILY
 
+from dateutil.rrule import rrule, DAILY
 import mysql.connector
 
 import keys
+
 
 conns = sqlite3.connect(**keys.SQLITECONFIG)
 curs = conns.cursor()

@@ -4,12 +4,14 @@ Created on 16.01.2017
 
 @author: bell
 '''
-import sqlite3
-import mysql.connector
-import pandas as pd
-import matplotlib.pyplot as plt
-import keys
 import datetime
+import sqlite3
+
+import mysql.connector
+
+import keys
+import matplotlib.pyplot as plt
+import pandas as pd
 
 
 start = input("Anfangsdatum eingeben: (YYYY-MM-DD)") or datetime.date.today()

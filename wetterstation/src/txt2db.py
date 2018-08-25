@@ -4,11 +4,14 @@ Created on 27.12.2016
 
 @author: bell
 '''
-import sqlite3
-import os
-import openpyxl
-import keys
 import getpass
+import os
+import sqlite3
+
+import openpyxl
+
+import keys
+
 
 conns = sqlite3.connect(**keys.SQLITECONFIG)
 curs = conns.cursor()

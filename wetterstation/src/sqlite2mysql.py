@@ -5,8 +5,11 @@ Created on 16.01.2017
 @author: bell
 '''
 import sqlite3
+
 import mysql.connector
+
 import keys
+
 
 conns = sqlite3.connect(**keys.SQLITECONFIG)
 curs = conns.cursor()

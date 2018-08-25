@@ -4,9 +4,10 @@ Created on 16.01.2017
 
 @author: bell
 '''
-import sqlite3
 import csv
 import datetime
+import sqlite3
+
 import keys
 
 
