@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-class MeasureModel:
+class AirrohrModel:
     def __init__(self, timestamp, sensor_id, software_version, p10, p2, temperature, humidity, pressure):
         self.timestamp = timestamp
         self.sensor_id = sensor_id
@@ -9,3 +9,8 @@ class MeasureModel:
         self.temperature = temperature
         self.humidity = humidity
         self.pressure = pressure
+        
+class SoilMoistureModel:
+    def __init__(self, temp, hum):
+        self.temperature = temp
+        self.humidity = hum

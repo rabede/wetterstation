@@ -4,14 +4,12 @@ from datetime import datetime
 import requests
 
 from flask import Flask, request
-from flask_restful import abort, Api, fields, marshal_with, reqparse, Resource
+from flask_restful import abort, Api, fields, marshal_with, Resource
 
-from models import MeasureModel
+from models import AirrohrModel
 import status
 
-
-
-class MeasureManager():
+class AirrohrManager():
     
     def __init__(self):
         self.measures = {}
@@ -32,7 +30,6 @@ class MeasureManager():
     def delete_measure(self, timestamp):
         del self.measures[timestamp]
 
-
 measure_fields = {
     'timestamp': fields.String,
     'sensor_id': fields.Integer,
@@ -45,16 +42,15 @@ measure_fields = {
     'pressure': fields.Float
 }
 
-measure_manager = MeasureManager()
+measure_manager = AirrohrManager()
 
-
-class Measure(Resource):
+class Airrohr(Resource):
     
     def abort_if_measure_doesnt_exist(self, timestamp):
         if timestamp not in measure_manager.measures:
             abort(
                 status.HTTP_404_NOT_FOUND,
-                measure="Measure {0} doesn't exist".format(timestamp))
+                measure="Airrohr {0} doesn't exist".format(timestamp))
             
     @marshal_with(measure_fields)
     def get(self, timestamp):
@@ -66,31 +62,7 @@ class Measure(Resource):
         measure_manager.delete_measure(timestamp)
         return '', status.HTTP_204_NO_CONTENT
 
-
-'''
-    @marshal_with(measure_fields)
-    def patch(self, timestamp):
-        self.abort_if_measure_doesnt_exist(timestamp)
-        measure = measure_manager.get_measure(timestamp)
-        parser = reqparse.RequestParser()
-        parser.add_argument('measure', type=str)
-        parser.add_argument('duration', type=int)
-        parser.add_argument('printed_times', type=int)
-        parser.add_argument('printed_once', type=bool)
-        args = parser.parse_args()
-        if 'measure' in args:
-            measure.measure = args['measure']
-        if 'duration' in args:
-            measure.duration = args['duration']
-        if 'printed_times' in args:
-            measure.printed_times = args['printed_times']
-        if 'printed_once' in args:
-            measure.printed_once = args['printed_once']
-        return measure
-'''
-
-   
-class MeasureList(Resource):
+class AirrohrList(Resource):
 
     @marshal_with(measure_fields)
     def get(self):
@@ -107,7 +79,7 @@ class MeasureList(Resource):
             # print(sensor['value_type'] + ': ' +  sensor['value'])
             args[sensor['value_type']] = sensor['value']
 
-        measure = MeasureModel(
+        measure = AirrohrModel(
             timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             sensor_id=args['sensor_id'],
             software_version=args['software_version'],
@@ -119,12 +91,11 @@ class MeasureList(Resource):
             )
         measure_manager.insert_measure(measure) 
         return measure, status.HTTP_201_CREATED   
-            
 
 app = Flask(__name__)
 api = Api(app)
-api.add_resource(MeasureList, '/api/measures/')
-api.add_resource(Measure, '/api/measure/<timestamp>', endpoint='measure_endpoint')
+api.add_resource(AirrohrList, '/api/measures/')
+api.add_resource(Airrohr, '/api/measure/<timestamp>', endpoint='measure_endpoint')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8888, debug=True)
+    app.run(host='0.0.0.0', port=8888, debug=True)
