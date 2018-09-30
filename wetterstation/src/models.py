@@ -11,6 +11,7 @@ class AirrohrModel:
         self.pressure = pressure
         
 class SoilMoistureModel:
-    def __init__(self, temp, hum):
+    def __init__(self, timestamp, temp, hum):
+        self.timestamp = timestamp
         self.temperature = temp
         self.humidity = hum
