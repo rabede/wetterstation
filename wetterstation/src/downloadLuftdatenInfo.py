@@ -22,6 +22,7 @@ cntdow = 0
 cntntf = 0
 
 ende = datetime.date.today()
+
 url = 'http://archive.luftdaten.info/'  # starting url
 localDir = '../data/'
 
@@ -30,7 +31,7 @@ os.makedirs(localDir, exist_ok=True)  # store data in ./luftdaten
 # Alle Sensoren aus DB holen:
 curm.execute('Select sensor_id, sensor_type from luftdaten_lev')  # where sensor_type = "DHT22"')
 sensors = curm.fetchall()
-#sensors = [('3081', 'SDS011')]
+#sensors = [('16203', 'SDS011')]
 for sensor in sensors:
     sensor_type = sensor[1]
     sensor_id = sensor[0]
@@ -39,10 +40,11 @@ for sensor in sensors:
 # Letzten Eintrag aus MySQL-DB holen:
     curm.execute('Select max( timestamp ) from luftdaten where sensor_id = "{}"'.format(sensor_id))
     start = curm.fetchone()[0]
-    #start = datetime.datetime.strptime('2018-02-09', '%Y-%m-%d')
+    #start = datetime.datetime.strptime('2018-10-08', '%Y-%m-%d')
+    #ende = datetime.datetime.strptime('2018-10-09', '%Y-%m-%d')
     print(start)
     if start == None:
-        start = datetime.datetime.today() - datetime.timedelta(days=3)
+        start = datetime.datetime.today() - datetime.timedelta(days=30)
     else:
         start = start + datetime.timedelta(hours=1)
 
