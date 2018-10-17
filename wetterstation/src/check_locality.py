@@ -19,23 +19,29 @@ def get_geodata(row, osmdata):
         if city != 'Leverkusen':
             print(row['sensor_id'] + ' in ' +  city)
             return
-        
-        row['ort'] = res.json()['address']['suburb']
-        
-        try:
-            stn = res.json()['address']['road'] 
-        except:
-            stn = res.json()['address']['footway']
-        
-        try:
-            hnr = res.json()['address']['house_number']
-        except:
-            hnr = ''
-    
-        row['adresse'] = stn + ' ' + hnr                    
-        row['plz'] = res.json()['address']['postcode']
     except:
-        osmdata[str(row['sensor_id'])] = res.json()    
+        try:
+            county = res.json()['address']['county']
+            if county != 'Leverkusen':
+                print(row['sensor_id'] + ' in ' +  county)
+                return
+            
+            row['ort'] = res.json()['address']['suburb']
+            
+            try:
+                stn = res.json()['address']['road'] 
+            except:
+                stn = res.json()['address']['footway']
+            
+            try:
+                hnr = res.json()['address']['house_number']
+            except:
+                hnr = ''
+        
+            row['adresse'] = stn + ' ' + hnr                    
+            row['plz'] = res.json()['address']['postcode']
+        except:
+            osmdata[str(row['sensor_id'])] = res.json()    
         
 
 if __name__ == '__main__':
