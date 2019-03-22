@@ -17,13 +17,13 @@ def get_geodata(row, osmdata):
     try:
         city = res.json()['address']['city']
         if city != 'Leverkusen':
-            print(row['sensor_id'] + ' in ' +  city)
+            print(city)
             return
     except:
         try:
             county = res.json()['address']['county']
             if county != 'Leverkusen':
-                print(row['sensor_id'] + ' in ' +  county)
+                print( county)
                 return
             
             row['ort'] = res.json()['address']['suburb']

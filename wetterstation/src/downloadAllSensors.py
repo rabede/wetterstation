@@ -23,6 +23,7 @@ start = time.time()
 
 curs.execute('Select sensor_id from lastcheckedsensor')
 maxid = int(curs.fetchone()[0])
+#maxid = 22984
 newmaxid = maxid
 osmdata = {}
 
