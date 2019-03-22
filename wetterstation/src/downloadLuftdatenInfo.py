@@ -45,6 +45,8 @@ for sensor in sensors:
     print(start)
     if start == None:
         start = datetime.datetime.today() - datetime.timedelta(days=30)
+    elif( datetime.datetime.today() - start > datetime.timedelta(days=3)):
+        start = datetime.datetime.today() - datetime.timedelta(days=1)
     else:
         start = start + datetime.timedelta(hours=1)
 
