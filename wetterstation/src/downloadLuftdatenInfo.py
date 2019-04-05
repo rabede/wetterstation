@@ -2,7 +2,7 @@
 # downloadLuftdatenInfo.py - Downloads data from http://archive.luftdaten.info/ 
 
 import datetime
-import os, csv, sqlite3
+import os, csv, sqlite3, sys
 from urllib.request import urlretrieve
 
 from dateutil.rrule import rrule, DAILY
@@ -21,8 +21,6 @@ cntsql = 0
 cntdow = 0
 cntntf = 0
 
-ende = datetime.date.today()
-
 url = 'http://archive.luftdaten.info/'  # starting url
 localDir = '../data/'
 
@@ -37,18 +35,31 @@ for sensor in sensors:
     sensor_id = sensor[0]
     print(sensor_type, sensor_id, end=' ')
     
+    try:
+        start = datetime.datetime.strptime(sys.argv[1], '%Y-%m-%d')
+    except:
 # Letzten Eintrag aus MySQL-DB holen:
-    curm.execute('Select max( timestamp ) from luftdaten where sensor_id = "{}"'.format(sensor_id))
-    start = curm.fetchone()[0]
-    #start = datetime.datetime.strptime('2018-10-08', '%Y-%m-%d')
-    #ende = datetime.datetime.strptime('2018-10-09', '%Y-%m-%d')
+        curm.execute('Select max( timestamp ) from luftdaten where sensor_id = "{}"'.format(sensor_id))
+        start = curm.fetchone()[0]
+    
+        if start == None:
+            start = datetime.datetime.today() - datetime.timedelta(days=30)
+        elif( datetime.datetime.today() - start > datetime.timedelta(days=3)):
+            start = datetime.datetime.today() - datetime.timedelta(days=1)
+        else:
+            start = start + datetime.timedelta(hours=1)
+    try: 
+        ende = datetime.datetime.strptime(sys.argv[2], '%Y-%m-%d')
+    except:
+        ende = datetime.date.today()
+    
+    '''
+    start = datetime.datetime.strptime('2019-03-28', '%Y-%m-%d')
+    ende = datetime.datetime.strptime('2019-03-31', '%Y-%m-%d')
+    '''
+    
     print(start)
-    if start == None:
-        start = datetime.datetime.today() - datetime.timedelta(days=30)
-    elif( datetime.datetime.today() - start > datetime.timedelta(days=3)):
-        start = datetime.datetime.today() - datetime.timedelta(days=1)
-    else:
-        start = start + datetime.timedelta(hours=1)
+    
 
     for dt in rrule(DAILY, dtstart=start, until=ende):
         downDate = dt.strftime("%Y-%m-%d")
