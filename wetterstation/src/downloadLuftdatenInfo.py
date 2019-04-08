@@ -13,11 +13,11 @@ import mysql.connector
 import keys
 
 with open ('config.yaml') as f:
-    config_dict = yaml.load(f)
+    config_dict = yaml.load(f, Loader=yaml.SafeLoader)
     
 logging.config.dictConfig(config_dict)
-verbose = logging.getLevelName("verbose")
-logfile = logging.getLevelName("logfile") 
+verbose = logging.getLogger("verbose")
+logfile = logging.getLogger("logfile") 
 
 conns = sqlite3.connect(**keys.SQLITECONFIG)
 curs = conns.cursor()
@@ -41,7 +41,6 @@ sensors = curm.fetchall()
 for sensor in sensors:
     sensor_type = sensor[1]
     sensor_id = sensor[0]
-    print(sensor_type, sensor_id, end=' ')
     
     try:
         start = datetime.datetime.strptime(sys.argv[1], '%Y-%m-%d')
@@ -65,10 +64,8 @@ for sensor in sensors:
     start = datetime.datetime.strptime('2019-03-28', '%Y-%m-%d')
     ende = datetime.datetime.strptime('2019-03-31', '%Y-%m-%d')
     '''
+    verbose.info(sensor_type + '\t' +  sensor_id + '\t' + str(start))
     
-    verbose.info(start)
-    
-
     for dt in rrule(DAILY, dtstart=start, until=ende):
         downDate = dt.strftime("%Y-%m-%d")
         fileName = downDate + '_' + sensor_type.lower() + '_sensor_' + sensor_id + '.csv'
