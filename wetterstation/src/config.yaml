@@ -1,0 +1,22 @@
+version: 1
+handlers:
+    console:
+        class: logging.StreamHandler
+        stream: ext://sys.stderr
+        formatter: basic
+    file:
+        class: logging.FileHandler
+        filename: logging.log
+        encoding: utf-8
+        formatter: basic
+formatters:
+    basic:
+        style: "{"
+        format: "{levelname:s}:{name:s}:{message:s}"
+loggers:
+    verbose: 
+        handlers: [console]
+        level: INFO
+    logfile:
+        handlers: [file]
+        level: INFO

@@ -3,6 +3,8 @@
 
 import datetime
 import os, csv, sqlite3, sys
+import logging.config
+import yaml
 from urllib.request import urlretrieve
 
 from dateutil.rrule import rrule, DAILY
@@ -10,6 +12,12 @@ import mysql.connector
 
 import keys
 
+with open ('config.yaml') as f:
+    config_dict = yaml.load(f)
+    
+logging.config.dictConfig(config_dict)
+verbose = logging.getLevelName("verbose")
+logfile = logging.getLevelName("logfile") 
 
 conns = sqlite3.connect(**keys.SQLITECONFIG)
 curs = conns.cursor()
@@ -58,7 +66,7 @@ for sensor in sensors:
     ende = datetime.datetime.strptime('2019-03-31', '%Y-%m-%d')
     '''
     
-    print(start)
+    verbose.info(start)
     
 
     for dt in rrule(DAILY, dtstart=start, until=ende):
@@ -68,11 +76,11 @@ for sensor in sensors:
         sensorUrl = url + downDate + '/' + fileName  # Download the page.
         try:
             if os.path.isfile(dst):
-                print('%s already downloaded' % fileName)
+                verbose.info('%s already downloaded' % fileName)
                 continue
             else:
                 urlretrieve(sensorUrl, dst)
-                print('%s downloading ' % fileName)
+                verbose.info('%s downloading ' % fileName)
             
             with open(dst, newline='') as csvfile:
                 reader = csv.DictReader(csvfile, delimiter=';', quotechar='|')
@@ -113,11 +121,11 @@ for sensor in sensors:
                             
                         cntsql += 1
                     except:
-                        print('Fehler: ', row)
+                        logfile.warn('Fehler: ', row)
             cntdow += 1
             os.remove(dst)
         except:
-            print('%s not found' % fileName)
+            verbose.info('%s not found' % fileName)
             cntntf += 1
         conns.commit()
         connm.commit()
@@ -125,4 +133,4 @@ for sensor in sensors:
 connm.close()
 conns.close()
 
-print(cntdow, 'files downloded. ', cntntf, ' files not found.', cntsql, ' sets inserted in SQLITEDB and  MySQLDB.')
+verbose.info(cntdow, 'files downloded. ', cntntf, ' files not found.', cntsql, ' sets inserted in SQLITEDB and  MySQLDB.')
