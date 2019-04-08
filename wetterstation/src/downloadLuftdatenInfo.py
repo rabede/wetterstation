@@ -77,7 +77,7 @@ for sensor in sensors:
                 continue
             else:
                 urlretrieve(sensorUrl, dst)
-                verbose.info('%s downloading ' % fileName)
+                verbose.debug('%s downloading ' % fileName)
             
             with open(dst, newline='') as csvfile:
                 reader = csv.DictReader(csvfile, delimiter=';', quotechar='|')
@@ -118,7 +118,7 @@ for sensor in sensors:
                             
                         cntsql += 1
                     except:
-                        logfile.warn('Fehler: ', row)
+                        logfile.warn('Fehler: ' + row)
             cntdow += 1
             os.remove(dst)
         except:
@@ -130,4 +130,4 @@ for sensor in sensors:
 connm.close()
 conns.close()
 
-verbose.info(cntdow, 'files downloded. ', cntntf, ' files not found.', cntsql, ' sets inserted in SQLITEDB and  MySQLDB.')
+verbose.info('%s files downloded. %s files not found. %s sets inserted in SQLITEDB and  MySQLDB.', cntdow,  cntntf,  cntsql)
