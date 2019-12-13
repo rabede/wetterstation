@@ -6,6 +6,7 @@ from builtins import range
 import json
 import requests
 import time, datetime
+import sys
 
 import mysql.connector
 
@@ -70,6 +71,7 @@ def get_file(date, nr, typ = 'sds011'):
         r = requests.head(sensorUrl)
         r.raise_for_status()
     except:
+        print(filename + " not found")
         return
     
     newmaxid = nr
@@ -93,10 +95,11 @@ def save_data(row):
     except:
         print('SQL-Fehler: ' + str(row))
     
-print(maxid)    
-
-for i in range(maxid + 1, maxid + 100):
-    get_file(downDate, str(i))
+if len(sys.argv) == 2:
+    get_file(downDate, sys.argv[1])
+else:
+    for i in range(maxid + 1, maxid + 100):
+        get_file(downDate, str(i))
 
 if osmdata:
     with open('../data/osmdata.' + str(newmaxid) + '.json', 'w') as outfile:
