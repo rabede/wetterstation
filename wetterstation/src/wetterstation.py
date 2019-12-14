@@ -2,14 +2,14 @@
 import datetime
 import logging.handlers
 import requests
+import serial
 import sys
 from time import sleep
 
-import dropbox
 import mysql.connector
 
+import dropbox
 import keys
-import serial
 
 
 LOG_FILENAME = keys.DIR + "wetter.log"

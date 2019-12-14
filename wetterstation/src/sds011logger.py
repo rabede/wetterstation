@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import datetime, time
-import sys
-
 import serial
+import sys
 
 
 # class adapted from https://github.com/FriskByBergen/RPiParticle/blob/master/lib/sds011.py

@@ -5,8 +5,8 @@ from asyncio.tasks import wait
 from builtins import range
 import json
 import requests
-import time, datetime
 import sys
+import time, datetime
 
 import mysql.connector
 
@@ -27,36 +27,6 @@ maxid = int(curs.fetchone()[0])
 #maxid = 22984
 newmaxid = maxid
 osmdata = {}
-
-#Hole Geodaten zu gegebenr Länge/Breite
-def get_geodata(row):
-    url = 'http://nominatim.openstreetmap.org/reverse'
-    lat = row['lat']
-    lon = row['lon']
-    
-    params = {'lat':lat, 'lon':lon, 'format':'json'}
-    res =  requests.get(url, params = params)
-    
-    try: 
-        if res.json()['address']['city'] != 'Leverkusen':
-            return
-    except:
-        print(res.json())
-    
-    try:
-        row['ort'] = res.json()['address']['suburb']
-    except:
-        row['ort'] = res.json()['address']['city']
-    try: 
-        row['adresse'] = res.json()['address']['road'] + ' ' + res.json()['address']['house_number']
-    except:
-        try:
-            row['adresse'] = res.json()['address']['road']
-        except:
-            row['adresse'] = ''
-    row['plz'] = res.json()['address']['postcode']
-    
-    #save_data(row)
 
 #Hole Datei vom luftdaten-Archich:
 def get_file(date, nr, typ = 'sds011'):

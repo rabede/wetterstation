@@ -8,9 +8,8 @@ import getpass
 import os
 import sqlite3
 
-import openpyxl
-
 import keys
+import openpyxl
 
 
 conns = sqlite3.connect(**keys.SQLITECONFIG)

@@ -2,15 +2,16 @@
 # downloadLuftdatenInfo.py - Downloads data from http://archive.luftdaten.info/ 
 
 import datetime
-import os, csv, sqlite3, sys
-import logging.config
-import yaml
-from urllib.request import urlretrieve
-
 from dateutil.rrule import rrule, DAILY
+import logging.config
+import os, csv, sqlite3, sys
+from urllib.request import urlretrieve
+import yaml
+
 import mysql.connector
 
 import keys
+
 
 with open ('config.yaml') as f:
     config_dict = yaml.load(f, Loader=yaml.SafeLoader)

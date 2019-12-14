@@ -13,7 +13,9 @@ def get_geodata(row, osmdata):
     
     params = {'lat':lat, 'lon':lon, 'format':'json'}
     res = requests.get(url, params=params)
-    
+   
+    print(res.json())
+
     try:
         city = res.json()['address']['city']
         if city != 'Leverkusen':
@@ -42,7 +44,6 @@ def get_geodata(row, osmdata):
             row['plz'] = res.json()['address']['postcode']
         except:
             osmdata[str(row['sensor_id'])] = res.json()    
-        
 
 if __name__ == '__main__':
     
@@ -62,5 +63,3 @@ if __name__ == '__main__':
     
     with open('../data/osmdata.json', 'w') as outfile:
         json.dump(osmdata, outfile, ensure_ascii=False)
-        
-                
