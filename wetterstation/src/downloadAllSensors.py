@@ -18,7 +18,7 @@ import pandas as pd
 conns = mysql.connector.connect(**SQLCONFIG)
 curs = conns.cursor()
 
-downDate = str(datetime.date.today() - datetime.timedelta(days=1))
+downDate = str(datetime.date.today() - datetime.timedelta(days=10))
 downloads = 0
 start = time.time()
 
